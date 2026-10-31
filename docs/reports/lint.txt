@@ -1,4 +1,4 @@
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\AndroidManifest.xml:12: Warning: The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE [ScopedStorage]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\AndroidManifest.xml:13: Warning: The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE [ScopedStorage]
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -185,7 +185,7 @@ C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\output
    MavenCentral dependency, and connects to the library every time, which
    makes it more flexible but also much slower.
 
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:184: Warning: Modifier parameter should be the first optional parameter [ModifierParameter from androidx.compose.ui]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:260: Warning: Modifier parameter should be the first optional parameter [ModifierParameter from androidx.compose.ui]
     onChoose: (String) -> Unit, onReload: () -> Unit, onConnect: (() -> Unit)? = null, modifier: Modifier = Modifier) {
                                                                                        ~~~~~~~~
 
@@ -214,9 +214,12 @@ C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\output
    where the version qualifier is less than or equal to the minSdkVersion,
    where the contents should be merged into the best folder.
 
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:71: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:97: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
     var privilegeVersion by mutableStateOf(0); private set
                             ~~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:98: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var libraryVersion by mutableStateOf(0); private set
+                          ~~~~~~~~~~~~~~
 
    Explanation for issues of type "AutoboxingStateCreation":
    Calling mutableStateOf<T>() when T is either backed by a primitive type on
@@ -236,25 +239,31 @@ C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\output
 C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:67: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
             val uri = Uri.parse(AUTHORIZE).buildUpon()
                       ~~~~~~~~~~~~~~~~~~~~
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:96: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:97: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                             val candidate = if (parts.size == 3 && parts[0] == "GET" && parts[1].startsWith("/auth/callback?")) Uri.parse(redirect.substringBefore("/auth/callback") + parts[1]) else null
                                                                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:131: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:132: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
         require(Uri.parse(jwksUrl).host == "auth.openai.com") { "JWKS接続先が不正です" }
                 ~~~~~~~~~~~~~~~~~~
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:185: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:186: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
             require(Uri.parse(endpoint).host == "auth.openai.com")
                     ~~~~~~~~~~~~~~~~~~~
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:80: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:58: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+        val default = pm.resolveActivity(Intent(Intent.ACTION_VIEW,Uri.parse("https://example.com/")),0)?.activityInfo?.packageName
+                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:106: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                        context.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url.toString())).addCategory(Intent.CATEGORY_BROWSABLE).setPackage(browser).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:111: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                         val uri = Uri.parse(raw)
                                   ~~~~~~~~~~~~~~
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:79: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:94: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                 val specific = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, android.net.Uri.parse("package:$packageName"))
                                                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:309: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:422: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
         TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://chatgpt.com/settings/usage"))) }) { Text("ChatGPTで利用枠・アプリの接続を管理") }
                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:342: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:455: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                 vm.preferences.files().forEach { raw -> runCatching { context.contentResolver.releasePersistableUriPermission(android.net.Uri.parse(raw), Intent.FLAG_GRANT_READ_URI_PERMISSION) } }
                                                                                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
 C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:69: Warning: Use the KTX function createBitmap instead? [UseKtx]
@@ -263,6 +272,9 @@ C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\output
 C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:73: Warning: Use the KTX extension function Bitmap.scale instead? [UseKtx]
                         val thumbnail = if (ratio < 1f) Bitmap.createScaledBitmap(cropped,(cropped.width*ratio).toInt(),(cropped.height*ratio).toInt(),true) else cropped
                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\TextDocuments.kt:30: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+        val text = read(context,Uri.parse(raw))
+                                ~~~~~~~~~~~~~~
 
    Explanation for issues of type "UseKtx":
    The Android KTX libraries decorates the Android platform SDK as well as
@@ -323,6 +335,12 @@ C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\output
 C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:188: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             addView(android.widget.TextView(this@AgentAccessibilityService).apply { text = "内容を編集して機密情報を除いてください。確認済みの会話履歴とともにOpenAIへ送信します。" })
                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:202: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+    fun updateStopLabel(label: String) { stopButton?.text = "動作中 · $label\n■ 停止" }
+                                                            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:207: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        val button = Button(this).apply { text = "動作中\n■ 停止"; filterTouchesWhenObscured = true; setOnClickListener { RuntimeControl.emergencyStop() } }
+                                                 ~~~~~~~~~~~
 
    Explanation for issues of type "SetTextI18n":
    When calling TextView#setText
@@ -337,4 +355,4 @@ C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\output
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-0 errors, 41 warnings, 1 hint
+0 errors, 46 warnings, 2 hints

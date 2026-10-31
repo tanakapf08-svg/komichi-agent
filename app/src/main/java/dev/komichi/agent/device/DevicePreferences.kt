@@ -23,5 +23,15 @@ class DevicePreferences(private val vault: Vault) {
     @Synchronized fun files(): List<String> = data.getJSONArray("files").let { a -> (0 until a.length()).map { a.getString(it) } }
     @Synchronized fun addFile(uri: String) { data.put("files", array((files() + uri).distinct().takeLast(20))); save() }
     @Synchronized fun clearFiles() { data.put("files", array(emptyList())); save() }
+    @Synchronized fun theme(): String = data.optString("theme","system")
+    @Synchronized fun setTheme(value: String) { require(value in setOf("system","light","dark")); data.put("theme",value); save() }
+    @Synchronized fun textSize(): Int = data.optInt("text_size",16)
+    @Synchronized fun setTextSize(value: Int) { require(value in setOf(14,16,18,20)); data.put("text_size",value); save() }
+    @Synchronized fun selectedPreset(): String = data.optString("preset","")
+    @Synchronized fun setSelectedPreset(id: String) { data.put("preset",id); save() }
+    @Synchronized fun toolEnabled(name: String): Boolean = data.optJSONObject("tools")?.optBoolean(name,true) ?: true
+    @Synchronized fun setToolEnabled(name: String, enabled: Boolean) {
+        val tools = data.optJSONObject("tools") ?: org.json.JSONObject(); tools.put(name,enabled); data.put("tools",tools); save()
+    }
     private fun save() = vault.write("device", data)
 }

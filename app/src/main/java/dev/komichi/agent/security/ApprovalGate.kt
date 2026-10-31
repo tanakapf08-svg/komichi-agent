@@ -12,7 +12,7 @@ import java.util.UUID
 data class Approval(val id: String, val title: String, val detail: String, val editable: Boolean,
                     val result: CompletableDeferred<String?>, val overlay: Boolean)
 
-class ApprovalGate {
+class ApprovalGate(private val onWaiting: (String, Boolean) -> Unit = { _,_ -> }) {
     private val mutable = MutableStateFlow<Approval?>(null)
     val pending = mutable.asStateFlow()
     suspend fun ask(title: String, detail: String, editable: Boolean = false): String? = withContext(Dispatchers.Main) {
@@ -21,6 +21,7 @@ class ApprovalGate {
         val item = Approval(UUID.randomUUID().toString(), title, detail, editable,
             CompletableDeferred(), service != null && RuntimeControl.running)
         mutable.value = item
+        onWaiting(title,editable)
         try {
             if (item.overlay) service?.showApproval(item, this@ApprovalGate)
             withTimeout(60_000) { item.result.await() }

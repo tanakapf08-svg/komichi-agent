@@ -10,6 +10,7 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performImeAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.komichi.agent.data.Vault
 import dev.komichi.agent.data.obj
@@ -86,7 +87,9 @@ class LocalSmokeTest {
         } }
         compose.onNodeWithText("コピー内容を確認").assertIsNotEnabled()
         compose.onNodeWithText("対象パッケージ名").performTextInput("com.example.fixture")
+        compose.onNodeWithText("対象パッケージ名").performImeAction()
         compose.onNodeWithText("一覧を確認").performScrollTo().performClick()
+        compose.waitUntil(3000) { submitted != null }
         compose.runOnIdle {
             assertEquals("list_app_data",submitted!!.first)
             assertEquals("com.example.fixture",submitted!!.second.getString("package"))

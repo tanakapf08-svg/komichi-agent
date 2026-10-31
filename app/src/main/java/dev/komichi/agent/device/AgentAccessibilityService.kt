@@ -199,11 +199,12 @@ class AgentAccessibilityService: AccessibilityService() {
         catch (_: Exception) { dialog = null; gate.resolve(item.id, null) }
     }
     fun dismissApproval() { dialog?.dismiss(); dialog = null }
+    fun updateStopLabel(label: String) { stopButton?.text = "動作中 · $label\n■ 停止" }
     fun showStop(visible: Boolean) {
         val wm = getSystemService(WindowManager::class.java)
         stopButton?.let { runCatching { wm.removeView(it) } }; stopButton = null
         if (!visible) return
-        val button = Button(this).apply { text = "■ 停止"; filterTouchesWhenObscured = true; setOnClickListener { RuntimeControl.emergencyStop() } }
+        val button = Button(this).apply { text = "動作中\n■ 停止"; filterTouchesWhenObscured = true; setOnClickListener { RuntimeControl.emergencyStop() } }
         val layout = WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             android.graphics.PixelFormat.TRANSLUCENT).apply { gravity = Gravity.TOP or Gravity.END; y = 80 }

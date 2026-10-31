@@ -21,10 +21,8 @@ Daemon will be stopped at the end of the build
 > Task :app:mergeDebugResources UP-TO-DATE
 > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
 > Task :app:extractDeepLinksDebug UP-TO-DATE
-> Task :app:processDebugMainManifest UP-TO-DATE
-> Task :app:processDebugManifest UP-TO-DATE
-> Task :app:processDebugManifestForPackage UP-TO-DATE
-> Task :app:processDebugResources UP-TO-DATE
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
 > Task :app:checkDebugDuplicateClasses UP-TO-DATE
 > Task :app:mergeExtDexDebug UP-TO-DATE
 > Task :app:mergeLibDexDebug UP-TO-DATE
@@ -64,44 +62,52 @@ Daemon will be stopped at the end of the build
 > Task :app:stripDebugAndroidTestDebugSymbols NO-SOURCE
 > Task :app:validateSigningDebugAndroidTest UP-TO-DATE
 > Task :app:writeDebugAndroidTestSigningConfigVersions UP-TO-DATE
+> Task :app:processDebugManifestForPackage
+> Task :app:processDebugResources
 > Task :app:compileDebugKotlin
 > Task :app:compileDebugJavaWithJavac UP-TO-DATE
 > Task :app:dexBuilderDebug
 > Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
 > Task :app:processDebugJavaRes UP-TO-DATE
 > Task :app:mergeDebugJavaResource UP-TO-DATE
-> Task :app:bundleDebugClassesToRuntimeJar
 > Task :app:bundleDebugClassesToCompileJar
+> Task :app:bundleDebugClassesToRuntimeJar
 > Task :app:generateDebugLintReportModel
 > Task :app:mergeProjectDexDebug
-> Task :app:compileDebugUnitTestKotlin UP-TO-DATE
-> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
-> Task :app:processDebugUnitTestJavaRes UP-TO-DATE
-> Task :app:testDebugUnitTest
 > Task :app:generateDebugAndroidTestLintModel
 > Task :app:generateDebugUnitTestLintModel
-> Task :app:compileDebugAndroidTestKotlin UP-TO-DATE
-> Task :app:compileDebugAndroidTestJavaWithJavac UP-TO-DATE
-> Task :app:dexBuilderDebugAndroidTest UP-TO-DATE
-> Task :app:mergeDebugAndroidTestGlobalSynthetics UP-TO-DATE
-> Task :app:processDebugAndroidTestJavaRes UP-TO-DATE
-> Task :app:mergeDebugAndroidTestJavaResource UP-TO-DATE
-> Task :app:mergeProjectDexDebugAndroidTest UP-TO-DATE
-> Task :app:packageDebugAndroidTest UP-TO-DATE
-> Task :app:createDebugAndroidTestApkListingFileRedirect UP-TO-DATE
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect UP-TO-DATE
 > Task :app:assembleDebug
-Starting 5 tests on Komichi_Root_API30(AVD) - 11
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes UP-TO-DATE
+> Task :app:compileDebugAndroidTestKotlin
+> Task :app:testDebugUnitTest
+> Task :app:compileDebugAndroidTestJavaWithJavac UP-TO-DATE
+> Task :app:dexBuilderDebugAndroidTest
+> Task :app:processDebugAndroidTestJavaRes UP-TO-DATE
+> Task :app:mergeDebugAndroidTestJavaResource UP-TO-DATE
+> Task :app:mergeDebugAndroidTestGlobalSynthetics
+> Task :app:mergeProjectDexDebugAndroidTest
+> Task :app:packageDebugAndroidTest
+> Task :app:createDebugAndroidTestApkListingFileRedirect UP-TO-DATE
 > Task :app:lintAnalyzeDebugAndroidTest
 > Task :app:lintAnalyzeDebugUnitTest
-Komichi_Root_API30(AVD) - 11 Tests 3/5 completed. (0 skipped) (0 failed)
-Finished 5 tests on Komichi_Root_API30(AVD) - 11
-> Task :app:connectedDebugAndroidTest
+Starting 15 tests on Komichi_Root_API30(AVD) - 11
+Komichi_Root_API30(AVD) - 11 Tests 1/15 completed. (0 skipped) (0 failed)
 > Task :app:lintAnalyzeDebug
-> Task :app:lintReportDebug UP-TO-DATE
+Komichi_Root_API30(AVD) - 11 Tests 6/15 completed. (0 skipped) (0 failed)
+> Task :app:connectedDebugAndroidTest
+
+Komichi_Root_API30(AVD) - 11 Tests 14/15 completed. (0 skipped) (0 failed)
+Finished 15 tests on Komichi_Root_API30(AVD) - 11
+
+> Task :app:lintReportDebug
+Wrote HTML report to file:///C:/Users/suzuo/Documents/Codex/2026-10-31/chatgpt-plus-android-ai-agent-1/outputs/komichi-agent/app/build/reports/lint-results-debug.html
+
 > Task :app:lintDebug
 
-BUILD SUCCESSFUL in 32s
-86 actionable tasks: 15 executed, 71 up-to-date
+BUILD SUCCESSFUL in 55s
+86 actionable tasks: 26 executed, 60 up-to-date
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.3.1/userguide/configuration_cache_enabling.html

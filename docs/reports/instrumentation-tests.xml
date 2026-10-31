@@ -1,15 +1,32 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<testsuites tests="5" failures="0" errors="0" skipped="0" time="12.592" timestamp="2026-10-31T08:00:23" hostname="localhost">
-  <testsuite name="dev.komichi.agent.LocalSmokeTest" tests="5" failures="0" errors="0" skipped="0" time="11.318" timestamp="2026-10-31T08:00:23" hostname="localhost">
+<testsuites tests="15" failures="0" errors="0" skipped="0" time="31.35" timestamp="2026-10-31T13:24:05" hostname="localhost">
+  <testsuite name="dev.komichi.agent.FeatureUiTest" tests="10" failures="0" errors="0" skipped="0" time="24.223" timestamp="2026-10-31T13:24:05" hostname="localhost">
     <properties>
       <property name="device" value="Komichi_Root_API30(AVD) - 11" />
       <property name="flavor" value="" />
       <property name="project" value=":app" />
     </properties>
-    <testcase name="rootFileFormRequiresAnAppAndEmitsOnlyStructuredArguments" classname="dev.komichi.agent.LocalSmokeTest" time="3.978" />
-    <testcase name="permissionPanelReportsUnverifiedRootAndFullModeNeedsExplicitConfirmation" classname="dev.komichi.agent.LocalSmokeTest" time="3.972" />
-    <testcase name="startsWithoutCredentialsOrPrivilegedServicesAndSettingsSurviveRecreation" classname="dev.komichi.agent.LocalSmokeTest" time="1.548" />
-    <testcase name="keystoreVaultEncryptsAndDetectsTampering" classname="dev.komichi.agent.LocalSmokeTest" time="0.751" />
-    <testcase name="chatModelPickerChangesTheSelectedModelWithoutANetworkCall" classname="dev.komichi.agent.LocalSmokeTest" time="1.069" />
+    <testcase name="cancellingServiceStartupAndThenRunningFastTasksDoesNotCrashLater" classname="dev.komichi.agent.FeatureUiTest" time="8.743" />
+    <testcase name="captureSyntheticScreensForVisualReview" classname="dev.komichi.agent.FeatureUiTest" time="2.251" />
+    <testcase name="browserOpeningCannotBypassTheSelectedAppScope" classname="dev.komichi.agent.FeatureUiTest" time="0.823" />
+    <testcase name="denyingAnOperationStopsWithoutWritingAFile" classname="dev.komichi.agent.FeatureUiTest" time="0.775" />
+    <testcase name="statusCardShowsStoppingAndDoesNotStayRunningAfterCancellation" classname="dev.komichi.agent.FeatureUiTest" time="0.59" />
+    <testcase name="aDisabledRoutineStepStopsBeforeAnyLaterWrite" classname="dev.komichi.agent.FeatureUiTest" time="0.927" />
+    <testcase name="loginNotificationStartupCanBeCancelledWithoutAnAccountOrNetworkCall" classname="dev.komichi.agent.FeatureUiTest" time="6.575" />
+    <testcase name="selectedTextTransferPreservesUtf8AndRejectsBinaryAndOversizedContent" classname="dev.komichi.agent.FeatureUiTest" time="0.491" />
+    <testcase name="workspaceEditorSavesEncryptedTextAndSurvivesActivityRecreation" classname="dev.komichi.agent.FeatureUiTest" time="1.922" />
+    <testcase name="approvalShowsRunningAndAWorkspaceWriteIsNotPerformedBeforeConsent" classname="dev.komichi.agent.FeatureUiTest" time="1.126" />
+  </testsuite>
+  <testsuite name="dev.komichi.agent.LocalSmokeTest" tests="5" failures="0" errors="0" skipped="0" time="6.129" timestamp="2026-10-31T13:24:05" hostname="localhost">
+    <properties>
+      <property name="device" value="Komichi_Root_API30(AVD) - 11" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="rootFileFormRequiresAnAppAndEmitsOnlyStructuredArguments" classname="dev.komichi.agent.LocalSmokeTest" time="1.409" />
+    <testcase name="permissionPanelReportsUnverifiedRootAndFullModeNeedsExplicitConfirmation" classname="dev.komichi.agent.LocalSmokeTest" time="2.38" />
+    <testcase name="startsWithoutCredentialsOrPrivilegedServicesAndSettingsSurviveRecreation" classname="dev.komichi.agent.LocalSmokeTest" time="1.182" />
+    <testcase name="keystoreVaultEncryptsAndDetectsTampering" classname="dev.komichi.agent.LocalSmokeTest" time="0.541" />
+    <testcase name="chatModelPickerChangesTheSelectedModelWithoutANetworkCall" classname="dev.komichi.agent.LocalSmokeTest" time="0.617" />
   </testsuite>
 </testsuites>

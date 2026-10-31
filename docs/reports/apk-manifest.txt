@@ -1,10 +1,11 @@
-package: name='dev.komichi.agent' versionCode='3' versionName='0.3.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
+package: name='dev.komichi.agent' versionCode='4' versionName='0.4.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'
 minSdkVersion:'26'
 targetSdkVersion:'36'
 uses-permission: name='android.permission.INTERNET'
 uses-permission: name='android.permission.FOREGROUND_SERVICE'
 uses-permission: name='android.permission.FOREGROUND_SERVICE_SPECIAL_USE'
 uses-permission: name='android.permission.POST_NOTIFICATIONS'
+uses-permission: name='android.permission.RECORD_AUDIO'
 uses-permission: name='android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION'
 uses-permission: name='moe.shizuku.manager.permission.API_V23'
 uses-permission: name='android.permission.QUERY_ALL_PACKAGES'
@@ -112,6 +113,8 @@ property: name='android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE' value='User-starte
 feature-group: label=''
   uses-feature: name='android.hardware.faketouch'
   uses-implied-feature: name='android.hardware.faketouch' reason='default feature for all apps'
+  uses-feature: name='android.hardware.microphone'
+  uses-implied-feature: name='android.hardware.microphone' reason='requested android.permission.RECORD_AUDIO permission'
 provides-component:'accessibility'
 main
 other-activities

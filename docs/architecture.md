@@ -21,6 +21,14 @@ flowchart TD
   M --> A
   UI --> E[緊急停止 / 通知 / 操作ログ]
   E --> A
+  UI --> L[暗号化テキスト作業スペース / メモ / 指示プリセット]
+  UI --> W[手動ワークフロー / 最大8操作]
+  W --> D
+  D --> L
+  D --> WEB[公開HTTPS取得 / 許可済み外部ブラウザ]
+  A --> PROGRESS[実行フェーズ / 経過時間 / 上限 / 停止状態]
+  PROGRESS --> UI
+  PROGRESS --> E
 ```
 
 ## 権限モデル
@@ -35,6 +43,8 @@ flowchart TD
 ## ツール契約
 
 namespaceは`android`。未知のnamespace、未知ツール、余分なキー、型不一致、範囲外、古いsnapshotを拒否。JSONからshellへ直接転送しない。
+
+v0.4.0は `workspace_list/read/write/delete/search`、`read_selected_document`、`open_url`、`fetch_web_page` を追加した。型・上限・version照合・個別承認は [作業スペースとワークフロー](workspace-and-workflows.md) を参照。無効にしたツールはAI向けschemaから除外し、実行器でも拒否する。手動ワークフローはAI接続を経由せず同じ実行器へ渡す。
 
 | 名前 | 引数 | 必要条件 |
 |---|---|---|
@@ -64,11 +74,19 @@ namespaceは`android`。未知のnamespace、未知ツール、余分なキー�
 
 SSEはresponse.completedを受けるまでtool callを確定しない。途中失敗時はゼロ件実行。履歴再送は暗号化ローカル履歴から作成し、reasoning等を含む返却outputも保持する。履歴サイズ上限時は新しい会話を案内する。
 
+実行状態は単一のRunTrackerで管理し、generationで古いcallbackを拒否する。停止処理へ入った後の遅延callbackで「動作中」へ戻さず、完了・失敗・キャンセルを区別する。Compose、通知、Accessibility停止ボタンでフェーズを共有する。百分率は計測していないため表示しない。
+
+短い処理や起動直後のキャンセルでforeground serviceを開始前にstopするとOSが後からプロセスを落とす場合があるため、操作・認証サービスはstartForeground完了のackを待つ。開始待ち中に中止した場合もservice自身がforegroundへ移ってから終了する。古いserviceの終了が新しい端末操作を停止しないようsessionを照合する。これは新しい認証方式を導入する変更ではない。
+
+プロセス再起動時に未解決のtool callを結果不明として閉じ、実行中カードを中断表示へ変更する。旧操作を自動リプレイしない。輸入したチャットJSONは表示専用で、認証情報・providerのtool historyを受け付けない。
+
 ## 認証と送信境界
 
 OIDC discovery/JWKSは固定のauth.openai.comからHTTPSで取得し、別hostへの誘導を拒否。維持されたJWTライブラリを使う。loopback listenerは127.0.0.1の動的port、GET /auth/callbackのみ、stateとPKCEで認証し、短時間で閉じる。ここにはAndroid操作APIを公開しない。
 
 保存はKeystore AES-GCM鍵とアプリprivate領域の暗号化ファイル。履歴、認証、操作ログのbackupは禁止。ログはツール名・結果コード・時刻のみで、引数や画面情報、token、コード、入力文は記録しない。パスワード入力欄・edit欄は画面読み取りから除外し、メール・カード形式・OTP等の機密パターンをマスクする。
+
+作業スペース、本人管理メモ、指示プリセット、ワークフローとUI設定もvaultへ保存する。本人がSAFで選んで書き出すファイルは、平文となることを表示してから保存先を選ぶ。Web取得にはOpenAI認証clientを流用せず、Cookieや認証情報のない別clientを使う。音声入力は端末内専用recognizer、読み上げはインストール済み端末内音声だけで、クラウドfallbackを用意しない。
 
 各認証登録をclient IDと検証済みsubで分離し、host IDを維持する。サインアウトはrefresh tokenの失効を試み、ネットワーク失敗時はリモート失効未確認を表示してローカルtokenを削除する。
 

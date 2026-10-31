@@ -74,9 +74,10 @@ class AuthManager(private val context: Context, private val vault: Vault) {
             if (account == null) uri.appendQueryParameter("agent_name_hint", "Komichi Agent")
             else old?.optString("id_token")?.takeIf { it.isNotBlank() }?.let { uri.appendQueryParameter("id_token_hint", it) }
             // User invokes login. No embedded WebView and no browser/session cookie access.
+            var loginSession = ""
             try {
                 withContext(Dispatchers.Main) {
-                    context.startForegroundService(Intent(context, LoginService::class.java))
+                    loginSession = LoginService.startAndAwait(context)
                     context.startActivity(Intent(Intent.ACTION_VIEW, uri.build()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                 }
                 val deadline = System.nanoTime() + 180_000_000_000L
@@ -113,7 +114,7 @@ class AuthManager(private val context: Context, private val vault: Vault) {
                 require(account == null || identity.getString("sub") == account.subject) { "選択したアカウントと認証結果が異なります" }
                 val rec = tokenRecord(token, clientId, identity, old)
                 commit(rec)
-            } finally { withContext(kotlinx.coroutines.NonCancellable + Dispatchers.Main) { context.stopService(Intent(context, LoginService::class.java)) } }
+            } finally { withContext(kotlinx.coroutines.NonCancellable + Dispatchers.Main) { LoginService.finish(loginSession) } }
         }
     }
 

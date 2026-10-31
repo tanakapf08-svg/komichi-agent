@@ -30,6 +30,7 @@ object PermissionStatuses {
             PermissionStatus("実行中の停止通知", if (notificationEnabled) "有効" else "無効・未許可", "OSの通知許可と停止通知チャンネルを確認"),
             PermissionStatus("画面操作（Accessibility）", if (AgentAccessibilityService.instance != null) "有効・接続中" else if (accessibilityEnabled) "有効・接続待ち" else "無効", "本人がOS設定で有効化する必要があります"),
             PermissionStatus("画面画像の取得", if (CaptureStore.preview.value.running) "取得中" else "毎回確認", "永続的な許可ではありません。OSが取得ごとに確認します"),
+            PermissionStatus("音声入力のマイク",if(context.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) "許可済み" else "未許可","音声入力ボタンから本人が開始した時だけ使用。Android 12以降の端末内認識のみ対応"),
             PermissionStatus("アプリへのアクセス", if (preferences.fullAccessEnabled()) "全アプリ対象" else "選択したアプリのみ", "全モードでも認証・権限などの保護画面と操作承認は維持"),
             PermissionStatus("共有ストレージ", if (SharedStorage.granted(context)) "OS許可済み" else "未許可", if (preferences.fullAccessEnabled()) "OSの許可範囲でディレクトリ一覧を参照できます" else "全アクセスモードを有効にしたときだけ使用"),
             PermissionStatus("選択ファイル（SAF）", if (readableDocuments > 0) "$readableDocuments 件許可済み" else "未選択・許可なし", "本人が選択したファイルの読み取り許可"),

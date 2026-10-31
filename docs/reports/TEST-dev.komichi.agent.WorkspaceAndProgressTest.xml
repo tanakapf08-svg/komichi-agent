@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.komichi.agent.WorkspaceAndProgressTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-31T13:23:29.081Z" hostname="SOICHIROPC" time="0.021">
+  <properties/>
+  <testcase name="processRestartClosesUnresolvedCallsWithoutReplayingThem" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.002"/>
+  <testcase name="documentVersionsRejectLostUpdatesAndDeletionOfChangedContent" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.006"/>
+  <testcase name="stoppingCannotBeReplacedByALateCallbackOrSuccessfulCompletion" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.002"/>
+  <testcase name="workspaceRejectsDevicePathsTraversalAndDirectoryFileCollisions" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.003"/>
+  <testcase name="disablingEveryToolProducesAnEmptyToolArray" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.001"/>
+  <testcase name="webRequestsRejectPrivateAddressesMixedDnsAndCredentialUrls" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.002"/>
+  <testcase name="workflowsPreserveOrderButRejectCommandsExtraFieldsAndStaleScreens" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.003"/>
+  <testcase name="chatArchivesExcludeProviderStateAndNeverImportExecutableHistory" classname="dev.komichi.agent.WorkspaceAndProgressTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
