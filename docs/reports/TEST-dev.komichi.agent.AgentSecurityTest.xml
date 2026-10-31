@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.komichi.agent.AgentSecurityTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-31T02:41:07.486Z" hostname="local-build" time="0.203">
+  <properties/>
+  <testcase name="masksSecretsAndKeepsOrdinaryText" classname="dev.komichi.agent.AgentSecurityTest" time="0.016"/>
+  <testcase name="neverExecutesToolsFromPartialOrFailedStreams" classname="dev.komichi.agent.AgentSecurityTest" time="0.007"/>
+  <testcase name="onlyOfficialHttpsEndpointsAreAccepted" classname="dev.komichi.agent.AgentSecurityTest" time="0.096"/>
+  <testcase name="rejectsSensitiveInputAndOutOfRangeEnums" classname="dev.komichi.agent.AgentSecurityTest" time="0.008"/>
+  <testcase name="completedResponseValidatesEveryToolBeforeReturningAny" classname="dev.komichi.agent.AgentSecurityTest" time="0.001"/>
+  <testcase name="consumesMultilineSseAndRequiresCompletedNotDone" classname="dev.komichi.agent.AgentSecurityTest" time="0.07"/>
+  <testcase name="rejectsShellInjectionUnknownToolsAndExtraArguments" classname="dev.komichi.agent.AgentSecurityTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

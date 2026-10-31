@@ -1,0 +1,51 @@
+{
+  "checked_date_jst": "2026-10-31",
+  "original_pi_url": "https://github.com/badlogic/pi-mono",
+  "repositories": [
+    {
+      "repository": "openclaw/openclaw",
+      "ref": "1bf930c8e40a547f0e2eda87f895b2a7a00e644a",
+      "committed_at": "2026-10-31T02:18:50Z",
+      "url": "https://github.com/openclaw/openclaw/commit/1bf930c8e40a547f0e2eda87f895b2a7a00e644a",
+      "inspection": "Public source and project documentation; not runtime tested"
+    },
+    {
+      "repository": "NousResearch/hermes-agent",
+      "ref": "f30105a0b4b3d0c1baa6c464189755ccdbc1ac7f",
+      "committed_at": "2026-10-31T01:59:00Z",
+      "url": "https://github.com/NousResearch/hermes-agent/commit/f30105a0b4b3d0c1baa6c464189755ccdbc1ac7f",
+      "inspection": "Public source and project documentation; not runtime tested"
+    },
+    {
+      "repository": "rikkahub/rikkahub",
+      "ref": "a5db9c9b770f316c76136970aa01a9d790e10e51",
+      "committed_at": "2026-10-29T02:38:34Z",
+      "url": "https://github.com/rikkahub/rikkahub/commit/a5db9c9b770f316c76136970aa01a9d790e10e51",
+      "inspection": "Public source and project documentation; not runtime tested"
+    },
+    {
+      "repository": "anomalyco/opencode",
+      "ref": "173f6c6dce7db669679625f6af93651ae66f16be",
+      "committed_at": "2026-10-31T01:56:41Z",
+      "url": "https://github.com/anomalyco/opencode/commit/173f6c6dce7db669679625f6af93651ae66f16be",
+      "inspection": "Public source and project documentation; not runtime tested"
+    },
+    {
+      "repository": "earendil-works/pi",
+      "ref": "35dfa757378bd7a8570670e99c2687bdd1039a06",
+      "committed_at": "2026-10-30T23:17:56Z",
+      "url": "https://github.com/earendil-works/pi/commit/35dfa757378bd7a8570670e99c2687bdd1039a06",
+      "inspection": "Public source and project documentation; not runtime tested"
+    }
+  ],
+  "openai_docs": [
+    "https://developers.openai.com/siwc/token-sharing-open-source",
+    "https://developers.openai.com/siwc/token-sharing-open-source/sign-in",
+    "https://developers.openai.com/siwc/token-sharing-open-source/models-and-inference",
+    "https://developers.openai.com/siwc/token-sharing-open-source/preview-limitations",
+    "https://developers.openai.com/siwc/token-sharing-open-source/profiles-and-sessions",
+    "https://developers.openai.com/siwc/token-sharing-open-source/errors-and-recovery"
+  ],
+  "account_authentication_tested": false,
+  "paid_api_fallback": false
+}

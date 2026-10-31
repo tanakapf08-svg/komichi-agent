@@ -1,0 +1,1 @@
+<resources><string name="app_name">Komichi Agent</string><string name="accessibility_description">ユーザーが開始した操作に限り、許可したアプリの画面情報を読み、確認後にタップ・入力などを行います。画面情報をAIに送る前に内容を確認できます。停止ボタンでいつでも停止できます。</string></resources>

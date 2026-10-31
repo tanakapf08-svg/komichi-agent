@@ -1,0 +1,228 @@
+.\app\build.gradle.kts:12: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+        targetSdk = 36
+        ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "OldTargetApi":
+   When your application or sdk runs on a version of Android that is more
+   recent than your targetSdk specifies that it has been tested with, various
+   compatibility modes kick in. This ensures that your application continues
+   to work, but it may look out of place. For example, if the targetSdk is
+   less than 14, your app may get an option button in the UI.
+
+   To fix this issue, set the targetSdk to the highest available value. Then
+   test your app to make sure everything works correctly. You may want to
+   consult the compatibility notes to see what changes apply to each version
+   you are adding support for:
+   https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+   as well as follow this guide:
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.
+   html
+
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.html
+
+.\app\src\main\res\xml\accessibility_service.xml:6: Warning: Attribute canTakeScreenshot is only used in API level 30 and higher (current min is 26) [UnusedAttribute]
+    android:canTakeScreenshot="false" android:isAccessibilityTool="false"
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\src\main\res\xml\accessibility_service.xml:6: Warning: Attribute isAccessibilityTool is only used in API level 31 and higher (current min is 26) [UnusedAttribute]
+    android:canTakeScreenshot="false" android:isAccessibilityTool="false"
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedAttribute":
+   This check finds attributes set in XML files that were introduced in a
+   version newer than the oldest version targeted by your application (with
+   the minSdkVersion attribute).
+
+   This is not an error; the application will simply ignore the attribute.
+   However, if the attribute is important to the appearance or functionality
+   of your application, you should consider finding an alternative way to
+   achieve the same result with only available attributes, and then you can
+   optionally create a copy of the layout in a layout-vNN folder which will be
+   used on API NN or higher where you can take advantage of the newer
+   attribute.
+
+   Note: This check does not only apply to attributes. For example, some tags
+   can be unused too, such as the new <tag> element in layouts introduced in
+   API 21.
+
+.\gradle\wrapper\gradle-wrapper.properties:3: Warning: A newer version of Gradle than 9.3.1 is available: 9.8.2 [AndroidGradlePluginVersion]
+distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "AndroidGradlePluginVersion":
+   This detector looks for usage of the Android Gradle Plugin where the
+   version you are using is not the current stable release. Using older
+   versions is fine, and there are cases where you deliberately want to stick
+   with an older version. However, you may simply not be aware that a more
+   recent version is available, and that is what this lint check helps find.
+
+.\app\build.gradle.kts:27: Warning: A newer version of androidx.compose:compose-bom than 2025.04.01 is available: 2026.09.00 [GradleDependency]
+    implementation(platform("androidx.compose:compose-bom:2025.04.01"))
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:28: Warning: A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.13.0 [GradleDependency]
+    implementation("androidx.activity:activity-compose:1.10.1")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:33: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:34: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:45: Warning: A newer version of androidx.compose:compose-bom than 2025.04.01 is available: 2026.09.00 [GradleDependency]
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.04.01"))
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+.\app\build.gradle.kts:35: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:36: Warning: A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:37: Warning: A newer version of com.nimbusds:nimbus-jose-jwt than 10.5 is available: 10.10 [NewerVersionAvailable]
+    implementation("com.nimbusds:nimbus-jose-jwt:10.5")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:42: Warning: A newer version of org.json:json than 20250517 is available: 20260814 [NewerVersionAvailable]
+    testImplementation("org.json:json:20250517")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:43: Warning: A newer version of com.squareup.okhttp3:mockwebserver than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\build.gradle.kts:44: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NewerVersionAvailable":
+   This detector checks with a central repository to see if there are newer
+   versions available for the dependencies used by this project. This is
+   similar to the GradleDependency check, which checks for newer versions
+   available in the Android SDK tools and libraries, but this works with any
+   MavenCentral dependency, and connects to the library every time, which
+   makes it more flexible but also much slower.
+
+.\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:61: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+    var privilegeVersion by mutableStateOf(0); private set
+                            ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "AutoboxingStateCreation":
+   Calling mutableStateOf<T>() when T is either backed by a primitive type on
+   the JVM or is a value class results in a state implementation that requires
+   all state values to be boxed. This usually causes an additional allocation
+   for each state write, and adds some additional work to auto-unbox values
+   when reading the value of the state. Instead, prefer to use a specialized
+   primitive state implementation for Int, Long, Float, and Double when the
+   state does not need to track null values and does not override the default
+   SnapshotMutationPolicy. See mutableIntStateOf(), mutableLongStateOf(),
+   mutableFloatStateOf(), and mutableDoubleStateOf() for more information.
+
+   Vendor: Jetpack Compose
+   Identifier: androidx.compose.runtime
+   Feedback: https://issuetracker.google.com/issues/new?component=612128
+
+.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:67: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+            val uri = Uri.parse(AUTHORIZE).buildUpon()
+                      ~~~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:96: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                            val candidate = if (parts.size == 3 && parts[0] == "GET" && parts[1].startsWith("/auth/callback?")) Uri.parse(redirect.substringBefore("/auth/callback") + parts[1]) else null
+                                                                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:131: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+        require(Uri.parse(jwksUrl).host == "auth.openai.com") { "JWKS接続先が不正です" }
+                ~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:185: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+            require(Uri.parse(endpoint).host == "auth.openai.com")
+                    ~~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:69: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                        val uri = Uri.parse(raw)
+                                  ~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\MainActivity.kt:229: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+        TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://chatgpt.com/settings/usage"))) }) { Text("ChatGPTで利用枠・アプリの接続を管理") }
+                                                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\MainActivity.kt:261: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                vm.preferences.files().forEach { raw -> runCatching { context.contentResolver.releasePersistableUriPermission(android.net.Uri.parse(raw), Intent.FLAG_GRANT_READ_URI_PERMISSION) } }
+                                                                                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:69: Warning: Use the KTX function createBitmap instead? [UseKtx]
+                        val padded = Bitmap.createBitmap(paddedWidth,image.height,Bitmap.Config.ARGB_8888)
+                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:73: Warning: Use the KTX extension function Bitmap.scale instead? [UseKtx]
+                        val thumbnail = if (ratio < 1f) Bitmap.createScaledBitmap(cropped,(cropped.width*ratio).toInt(),(cropped.height*ratio).toInt(),true) else cropped
+                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseKtx":
+   The Android KTX libraries decorates the Android platform SDK as well as
+   various libraries with more convenient extension functions available from
+   Kotlin, allowing you to use default parameters, named parameters, and
+   more.
+
+   Available options:
+
+   **remove-defaults** (default is true):
+   Whether to skip arguments that match the defaults provided by the extension.
+
+   Extensions often provide default values for some of the parameters. For example:
+   ```kotlin
+   fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> { return Files.readAllLines(this, charset) }
+   ```
+   This lint check will by default automatically omit parameters that match the default, so if your code was calling
+
+   ```kotlin
+   Files.readAllLines(file, Charset.UTF_8)
+   ```
+   lint would replace this with
+   ```kotlin
+   file.readLines()
+   ```
+   rather than
+
+   ```kotlin
+   file.readLines(Charset.UTF_8
+   ```
+   You can turn this behavior off using this option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="remove-defaults" value="true" />
+       </issue>
+   </lint>
+   ```
+
+   **require-present** (default is true):
+   Whether to only offer extensions already available.
+
+   This option lets you only have lint suggest extension replacements if those extensions are already available on the class path (in other words, you're already depending on the library containing the extension method.)
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="require-present" value="true" />
+       </issue>
+   </lint>
+   ```
+
+.\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:187: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            addView(android.widget.TextView(this@AgentAccessibilityService).apply { text = "内容を編集して機密情報を除いてください。確認済みの会話履歴とともにOpenAIへ送信します。" })
+                                                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
+0 errors, 25 warnings, 1 hint
