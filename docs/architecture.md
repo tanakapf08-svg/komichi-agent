@@ -25,10 +25,10 @@ flowchart TD
 
 ## 権限モデル
 
-- 通常: INTERNETのみでAIに接続。パッケージ列挙はlauncherアプリに限定。SAFはユーザーが選択したURIだけ。
+- 通常: INTERNETでAIに接続。通常モードのパッケージ列挙はlauncherアプリに限定。SAFはユーザーが選択したURIだけ。v0.2.0の全アクセスモードは本人の明示opt-in後に非launcherを含むインストール済みアプリを検索対象にする。共有ストレージの一覧には別途OS権限が必要。[アクセスモード](access-modes.md)
 - 画面: Accessibilityの説明とアプリ側の対象許可リストを設定した後、OS設定からユーザーが明示的に有効化。サービスの存在だけでは操作を許可しない。実行中フラグと操作ごとの承認も必要。
 - Shizuku: binder生存・v11以降・permissionを毎回チェック。権限ダイアログはユーザーのボタン操作からだけ起動。UserServiceに任意command引数は存在しない。
-- Root: root管理アプリをインストール・設定変更しない。ユーザーがroot機能を明示的に許可してから、限定した固定操作を実行。許可したlauncherパッケージへのforce-stopのみを管理操作として提供。システムファイル変更・uninstall・権限変更は実装しない。
+- Root: root管理アプリをインストール・設定変更しない。ユーザーがroot機能を明示的に許可してから、限定した固定操作を実行。対象として許可された一般アプリへのforce-stopのみを管理操作として提供。システムアプリの停止・システムファイル変更・uninstall・権限変更は実装しない。Root設定の有効と実UID確認を別に表示する。
 - 操作承認はツールcall ID・引数・対象に対応する1回限り。自動承認、画面からの承認、モデルからの承認は認めない。
 - 外部アプリでの確認はAccessibility overlayを使い、対象アプリを切り替えずに表示。古いsnapshotに対する操作は、画面の再検証で拒否する。
 
@@ -42,6 +42,7 @@ namespaceは`android`。未知のnamespace、未知ツール、余分なキー�
 | open_app | package:string | launcherあり、対象許可、実行確認 |
 | open_settings | page:enum | 許可された設定ページ、実行確認 |
 | list_files | なし | SAFで選択された項目の情報のみ、送信確認 |
+| list_directory | path:string | 全モード＋OSファイル許可、共有ストレージ内の一覧情報のみ、送信確認 |
 | read_screen | なし | Accessibility、対象許可、マスキング、送信確認 |
 | tap_element | snapshot_id:string, element_id:string | snapshot一致、対象許可、実行確認 |
 | swipe_screen | snapshot_id:string, direction:enum | snapshot一致、限定距離・時間、実行確認 |

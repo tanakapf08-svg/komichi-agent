@@ -14,6 +14,7 @@ import dev.komichi.agent.data.obj
 import dev.komichi.agent.security.ApprovalGate
 import dev.komichi.agent.security.Privacy
 import dev.komichi.agent.security.RuntimeControl
+import dev.komichi.agent.security.AppAccessPolicy
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
@@ -22,20 +23,26 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.json.JSONObject
 
-data class LaunchableApp(val packageName: String, val label: String, val system: Boolean)
+data class LaunchableApp(val packageName: String, val label: String, val system: Boolean, val launchable: Boolean = true)
 class UserDenied: Exception("ユーザーが拒否したため停止しました")
 
 class DeviceBroker(private val context: Context, private val preferences: DevicePreferences,
     private val gate: ApprovalGate, private val audit: AuditLog, val shizuku: ShizukuBridge) {
     fun apps(query: String = ""): List<LaunchableApp> {
         val pm = context.packageManager
-        return pm.queryIntentActivities(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0)
+        val launchable = pm.queryIntentActivities(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0)
             .map { LaunchableApp(it.activityInfo.packageName, it.loadLabel(pm).toString(), it.activityInfo.applicationInfo.flags and (ApplicationInfo.FLAG_SYSTEM or ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0) }
-            .distinctBy { it.packageName }.filter { it.label.contains(query, true) || it.packageName.contains(query, true) }.sortedBy { it.label }
+            .distinctBy { it.packageName }
+        val apps = if (preferences.fullAccessEnabled()) {
+            val launchableIds = launchable.map { it.packageName }.toSet()
+            pm.getInstalledApplications(0).map { LaunchableApp(it.packageName, pm.getApplicationLabel(it).toString(),
+                it.flags and (ApplicationInfo.FLAG_SYSTEM or ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0, it.packageName in launchableIds) }
+        } else launchable
+        return apps.filter { it.label.contains(query, true) || it.packageName.contains(query, true) }.sortedBy { it.label }
     }
     private fun allowedPackage(pkg: String): LaunchableApp {
-        require(pkg in preferences.allowed() && pkg != context.packageName) { "アプリ設定でこの対象への操作を許可してください" }
-        return apps().firstOrNull { it.packageName == pkg } ?: error("起動可能な対象アプリがありません")
+        require(AppAccessPolicy.allows(pkg, context.packageName, preferences.fullAccessEnabled(), preferences.allowed())) { "対象アプリを選択するか、全アクセスモードを有効にしてください" }
+        return apps().firstOrNull { it.packageName == pkg } ?: error("対象アプリがありません")
     }
     private fun accessibility() = AgentAccessibilityService.instance ?: error("Accessibilityをユーザーが有効にする必要があります")
     suspend fun execute(call: ToolCall, shareResult: Boolean = true): String {
@@ -54,7 +61,7 @@ class DeviceBroker(private val context: Context, private val preferences: Device
             RuntimeControl.requireRunning(); currentCoroutineContext().ensureActive()
             val result = withTimeout(10_000) {
                 when (call.name) {
-                    "search_apps" -> withContext(Dispatchers.IO) { obj("untrusted_observation" to true, "apps" to array(apps(a.getString("query")).take(100).map { obj("package" to it.packageName, "label" to Privacy.mask(it.label)) })) }
+                    "search_apps" -> withContext(Dispatchers.IO) { obj("untrusted_observation" to true, "apps" to array(apps(a.getString("query")).take(100).map { obj("package" to it.packageName, "label" to Privacy.mask(it.label), "launchable" to it.launchable) })) }
                     "open_app" -> withContext(Dispatchers.Main) {
                         allowedPackage(a.getString("package"))
                         val intent = context.packageManager.getLaunchIntentForPackage(a.getString("package")) ?: error("アプリを起動できません")
@@ -74,6 +81,7 @@ class DeviceBroker(private val context: Context, private val preferences: Device
                         obj("selection" to index, "name" to Privacy.mask(name), "size" to size, "mime" to context.contentResolver.getType(uri))
                     })) }
                     "read_screen" -> accessibility().readScreen()
+                    "list_directory" -> withContext(Dispatchers.IO) { SharedStorage.list(context,preferences,a.getString("path")) }
                     "tap_element", "swipe_screen", "scroll_screen", "input_text", "navigate_back", "navigate_home" -> accessibility().operate(call.name,a)
                     "check_shizuku_status" -> shizuku.status()
                     "system_diagnostics" -> obj("untrusted_observation" to true, "diagnostics" to shizuku.run())

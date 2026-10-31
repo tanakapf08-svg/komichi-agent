@@ -1,12 +1,14 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<testsuites tests="2" failures="0" errors="0" skipped="0" time="7.04" timestamp="2026-10-31T02:41:20" hostname="localhost">
-  <testsuite name="dev.komichi.agent.LocalSmokeTest" tests="2" failures="0" errors="0" skipped="0" time="6.159" timestamp="2026-10-31T02:41:20" hostname="localhost">
+<testsuites tests="4" failures="0" errors="0" skipped="0" time="20.015" timestamp="2026-10-31T07:29:12" hostname="localhost">
+  <testsuite name="dev.komichi.agent.LocalSmokeTest" tests="4" failures="0" errors="0" skipped="0" time="18.764" timestamp="2026-10-31T07:29:12" hostname="localhost">
     <properties>
       <property name="device" value="Medium_Phone_API_37.0(AVD) - 17" />
       <property name="flavor" value="" />
       <property name="project" value=":app" />
     </properties>
-    <testcase name="startsWithoutCredentialsOrPrivilegedServicesAndSettingsSurviveRecreation" classname="dev.komichi.agent.LocalSmokeTest" time="4.706" />
-    <testcase name="keystoreVaultEncryptsAndDetectsTampering" classname="dev.komichi.agent.LocalSmokeTest" time="1.453" />
+    <testcase name="permissionPanelReportsUnverifiedRootAndFullModeNeedsExplicitConfirmation" classname="dev.komichi.agent.LocalSmokeTest" time="12.533" />
+    <testcase name="startsWithoutCredentialsOrPrivilegedServicesAndSettingsSurviveRecreation" classname="dev.komichi.agent.LocalSmokeTest" time="2.846" />
+    <testcase name="keystoreVaultEncryptsAndDetectsTampering" classname="dev.komichi.agent.LocalSmokeTest" time="1.291" />
+    <testcase name="chatModelPickerChangesTheSelectedModelWithoutANetworkCall" classname="dev.komichi.agent.LocalSmokeTest" time="2.094" />
   </testsuite>
 </testsuites>

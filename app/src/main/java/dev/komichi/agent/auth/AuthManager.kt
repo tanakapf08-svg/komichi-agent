@@ -50,9 +50,9 @@ class AuthManager(private val context: Context, private val vault: Vault) {
         require(accounts().any { it.clientId == clientId }); state.put("active", clientId); save()
     }
     @Synchronized private fun record(id: String): JSONObject = state.getJSONArray("accounts").objects().first { it.getString("client_id") == id }
-    @Synchronized private fun commit(record: JSONObject) {
+    @Synchronized private fun commit(record: JSONObject, activate: Boolean = true) {
         val others = state.getJSONArray("accounts").objects().filter { it.getString("client_id") != record.getString("client_id") }
-        state.put("accounts", array(others + record)); state.put("active", record.getString("client_id")); save()
+        state.put("accounts", array(others + record)); if (activate) state.put("active", record.getString("client_id")); save()
     }
     private fun random(): String = Base64.encodeToString(ByteArray(32).apply { SecureRandom().nextBytes(this) }, Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
     private fun challenge(verifier: String) = Base64.encodeToString(MessageDigest.getInstance("SHA-256").digest(verifier.toByteArray()), Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING)
@@ -171,7 +171,7 @@ class AuthManager(private val context: Context, private val vault: Vault) {
             val identity = if (tokens.has("id_token")) validateIdentity(tokens.getString("id_token"), active.clientId, null)
                 else obj("sub" to active.subject, "email" to active.label)
             require(identity.getString("sub") == active.subject)
-            rec = tokenRecord(tokens, active.clientId, identity, rec); commit(rec)
+            rec = tokenRecord(tokens, active.clientId, identity, rec); commit(rec, activate = false)
         }
         require(DIRECT in rec.optString("scope").split(' ')) { "契約枠共有の許可が失われました" }
         rec.getString("access_token")

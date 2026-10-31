@@ -1,6 +1,7 @@
 package dev.komichi.agent
 
 import android.Manifest
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -40,6 +42,8 @@ import dev.komichi.agent.data.obj
 import dev.komichi.agent.device.AgentAccessibilityService
 import dev.komichi.agent.device.CaptureStore
 import dev.komichi.agent.device.ScreenCaptureService
+import dev.komichi.agent.device.PermissionStatuses
+import dev.komichi.agent.device.RootBridge
 import io.noties.markwon.Markwon
 import kotlinx.coroutines.launch
 import rikka.shizuku.Shizuku
@@ -47,6 +51,7 @@ import rikka.shizuku.Shizuku
 class MainActivity: ComponentActivity() {
     private val vm: AgentViewModel by viewModels()
     private val notifications = registerForActivityResult(ActivityResultContracts.RequestPermission()) { vm.refreshStatus() }
+    private val storage = registerForActivityResult(ActivityResultContracts.RequestPermission()) { vm.refreshStatus() }
     private val documents = registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         uris.take(20).forEach { uri ->
             runCatching { contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION); vm.preferences.addFile(uri.toString()) }
@@ -66,7 +71,14 @@ class MainActivity: ComponentActivity() {
         setContent { KomichiUi(vm, onPickFiles = { documents.launch(arrayOf("*/*")) }, onCapture = {
             capture.launch(getSystemService(android.media.projection.MediaProjectionManager::class.java).createScreenCaptureIntent())
         }, onNotifications = {
-            if (Build.VERSION.SDK_INT >= 33) notifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+            if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED)
+                notifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+            else startActivity(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE,packageName))
+        }, onStoragePermission = {
+            if (Build.VERSION.SDK_INT >= 30) {
+                val specific = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, android.net.Uri.parse("package:$packageName"))
+                runCatching { startActivity(specific) }.onFailure { startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)) }
+            } else storage.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
         }) }
     }
     override fun onDestroy() {
@@ -81,7 +93,7 @@ class MainActivity: ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -> Unit, onCapture: () -> Unit) {
+fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -> Unit, onCapture: () -> Unit, onStoragePermission: () -> Unit) {
     val systemDark = isSystemInDarkTheme()
     var dark by rememberSaveable { mutableStateOf(systemDark) }
     val colors = if (dark) darkColorScheme(primary = Color(0xFF70D5B7), background = Color(0xFF111918), surface = Color(0xFF172220), surfaceVariant = Color(0xFF253531))
@@ -91,6 +103,7 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
         var tab by rememberSaveable { mutableStateOf("chat") }
         var draft by rememberSaveable { mutableStateOf("") }
         val pending by vm.gate.pending.collectAsState()
+        val modelState by vm.modelCatalogState.collectAsState()
         val owner = LocalLifecycleOwner.current
         DisposableEffect(owner) {
             val observer = LifecycleEventObserver { _,event -> if (event == Lifecycle.Event.ON_RESUME) vm.refreshStatus() }
@@ -120,8 +133,9 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
                             FilterChip(selected = tab == value, onClick = { tab = value }, label = { Text(label) })
                         }
                     }
+                    if (tab == "chat") ModelSelector(vm, onConnect = { tab = "settings" }, modifier = Modifier.padding(horizontal = 16.dp))
                     Text(vm.status, Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp), style = MaterialTheme.typography.bodySmall)
-                    if (vm.busy) Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+                    if (vm.busy || modelState.loading) Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                         CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
                         Button(onClick = vm::stop, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)) { Text("■ すべて停止") }
                     }
@@ -132,7 +146,7 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             OutlinedTextField(value = draft, onValueChange = { draft = it.take(16_000) }, placeholder = { Text("端末への指示や質問を入力") },
                                 enabled = !vm.busy, maxLines = 5, shape = RoundedCornerShape(24.dp), modifier = Modifier.weight(1f))
-                            Button(onClick = { vm.send(draft); if (vm.model.isNotBlank()) draft = "" }, enabled = !vm.busy && draft.isNotBlank()) { Text("送信") }
+                            Button(onClick = { vm.send(draft); if (vm.model.isNotBlank()) draft = "" }, enabled = !vm.busy && !modelState.loading && vm.model.isNotBlank() && draft.isNotBlank()) { Text("送信") }
                         }
                         Text("ChatGPT契約枠のみ使用 · API課金への自動切替なし", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(top = 6.dp))
                     }
@@ -140,7 +154,7 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
             }) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding)) {
                     when(tab) {
-                        "settings" -> SettingsPane(vm, onPickFiles, onNotifications, onCapture)
+                        "settings" -> SettingsPane(vm, onPickFiles, onNotifications, onCapture, onStoragePermission)
                         "logs" -> LogsPane(vm)
                         else -> ChatPane(vm)
                     }
@@ -158,6 +172,38 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
                 }, confirmButton = { Button(onClick = { vm.gate.resolve(approval.id, if (approval.editable) review else "approved") }) { Text(if (approval.editable) "この内容を送信" else "今回だけ許可") } },
                 dismissButton = { TextButton(onClick = { vm.gate.resolve(approval.id, null) }) { Text("拒否") } })
         }
+    }
+}
+
+@Composable private fun ModelSelector(vm: AgentViewModel, modifier: Modifier = Modifier, onConnect: (() -> Unit)? = null) {
+    val state by vm.modelCatalogState.collectAsState()
+    ModelPicker(state,!vm.busy,vm.activeAccount?.connected == true,vm::pickModel,vm::fetchModels,onConnect,modifier)
+}
+
+@Composable internal fun ModelPicker(state: dev.komichi.agent.agent.ModelCatalogState, enabled: Boolean, connected: Boolean,
+    onChoose: (String) -> Unit, onReload: () -> Unit, onConnect: (() -> Unit)? = null, modifier: Modifier = Modifier) {
+    var expanded by remember { mutableStateOf(false) }
+    Column(modifier.fillMaxWidth()) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Box(Modifier.weight(1f)) {
+                OutlinedButton(onClick = {
+                    if (!connected) onConnect?.invoke()
+                    else if (state.models.isEmpty()) onReload() else expanded = true
+                }, enabled = enabled && !state.loading, modifier = Modifier.fillMaxWidth()) {
+                    Text(if (state.loading) "モデル取得中…" else state.models.firstOrNull { it.id == state.selected }?.name ?: "モデルを選択",
+                        maxLines = 1, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                    Text(" ▾")
+                }
+                DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                    state.models.forEach { choice -> DropdownMenuItem(text = { Text(choice.name + if (state.selected == choice.id) " ✓" else "") },
+                        onClick = { onChoose(choice.id); expanded = false }) }
+                }
+            }
+            TextButton(onClick = { if (connected) onReload() else onConnect?.invoke() }, enabled = enabled && !state.loading) {
+                Text(if (connected) "再取得" else "接続")
+            }
+        }
+        state.error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
     }
 }
 
@@ -192,18 +238,58 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
         update = { view -> view.setTextColor(android.graphics.Color.argb((color.alpha*255).toInt(),(color.red*255).toInt(),(color.green*255).toInt(),(color.blue*255).toInt())); markwon.setMarkdown(view,text) }, modifier = Modifier.fillMaxWidth())
 }
 
-@Composable private fun SettingsPane(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -> Unit, onCapture: () -> Unit) {
+@Composable private fun SettingsPane(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -> Unit, onCapture: () -> Unit, onStoragePermission: () -> Unit) {
     val context = LocalContext.current
     val version = vm.privilegeVersion
-    var accountMenu by remember { mutableStateOf(false) }; var modelMenu by remember { mutableStateOf(false) }
+    var accountMenu by remember { mutableStateOf(false) }
     var disclosure by remember { mutableStateOf(false) }; var rootDisclosure by remember { mutableStateOf(false) }
     var query by rememberSaveable { mutableStateOf("") }
     var localError by remember { mutableStateOf("") }
+    var fullDisclosure by remember { mutableStateOf(false) }
+    var permissionsExpanded by rememberSaveable { mutableStateOf(false) }
+    val fullAccess = remember(version) { vm.preferences.fullAccessEnabled() }
     val allowed = remember(version) { vm.preferences.allowed() }
-    val apps = remember(query,version) { vm.broker.apps(query).take(100) }
+    val apps by produceState(initialValue = emptyList<dev.komichi.agent.device.LaunchableApp>(),query,version) {
+        value = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { vm.broker.apps(query).take(100) }
+    }
     val shizuku = remember(version) { vm.shizuku.status() }
     val captured by CaptureStore.preview.collectAsState()
+    val rootState by RootBridge.status.collectAsState()
+    val permissionStates = remember(version,captured.running,rootState) { PermissionStatuses.read(context,vm.preferences,vm.shizuku) }
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text("権限の状態", style = MaterialTheme.typography.titleLarge)
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = { permissionsExpanded = !permissionsExpanded; vm.refreshStatus() }) { Text(if (permissionsExpanded) "権限一覧を閉じる" else "権限一覧を表示") }
+            TextButton(onClick = vm::refreshStatus) { Text("状態を更新") }
+        }
+        if (permissionsExpanded) permissionStates.forEach { item ->
+            Surface(shape = RoundedCornerShape(12.dp), tonalElevation = 1.dp, modifier = Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(12.dp)) {
+                    Text("${item.name}：${item.state}", style = MaterialTheme.typography.titleSmall)
+                    Text(item.detail, style = MaterialTheme.typography.bodySmall)
+                    when (item.name) {
+                        "実行中の停止通知" -> TextButton(onClick = onNotifications, enabled = !vm.busy) { Text("通知を設定") }
+                        "画面操作（Accessibility）" -> TextButton(onClick = { disclosure = true }, enabled = !vm.busy) { Text("画面操作を設定") }
+                        "画面画像の取得" -> TextButton(onClick = onCapture, enabled = !vm.busy && !captured.running) { Text("画面取得を許可") }
+                        "共有ストレージ" -> TextButton(onClick = onStoragePermission, enabled = !vm.busy && fullAccess) { Text("ファイル権限を設定") }
+                        "選択ファイル（SAF）" -> TextButton(onClick = onPickFiles, enabled = !vm.busy) { Text("ファイルを選択") }
+                        "Shizukuの権限" -> TextButton(onClick = { runCatching { vm.shizuku.requestPermission() }.onFailure { localError = it.message ?: "Shizukuが利用できません" } }, enabled = !vm.busy) { Text("Shizukuを許可") }
+                        "Rootの実利用" -> TextButton(onClick = { if (vm.preferences.rootEnabled()) vm.manualTool("check_root_status") else rootDisclosure = true }, enabled = !vm.busy) { Text("Rootを確認") }
+                    }
+                }
+            }
+        }
+        Surface(shape = RoundedCornerShape(12.dp), tonalElevation = 2.dp) {
+            Column(Modifier.fillMaxWidth().padding(12.dp)) {
+                Row {
+                    Text("全アクセスモード", Modifier.weight(1f).padding(top = 12.dp), style = MaterialTheme.typography.titleMedium)
+                    Switch(checked = fullAccess, onCheckedChange = { enabled -> if (enabled) fullDisclosure = true else { vm.preferences.setFullAccess(false); vm.refreshStatus() } }, enabled = !vm.busy, modifier = Modifier.testTag("fullAccessSwitch"))
+                }
+                Text(if (fullAccess) "全インストール済みアプリが対象。共有ストレージはOSの許可後に参照できます。" else "現在は選択したアプリとファイルのみが対象です。", style = MaterialTheme.typography.bodySmall)
+                if (fullAccess) TextButton(onClick = onStoragePermission, enabled = !vm.busy) { Text("共有ストレージの権限を設定") }
+            }
+        }
+        HorizontalDivider()
         Text("ChatGPTとの接続", style = MaterialTheme.typography.titleLarge)
         Text("公式の契約枠共有を使用します。アカウントや地域の条件で利用できない場合は停止します。契約枠は他の対応アプリと共有されます。", style = MaterialTheme.typography.bodySmall)
         Box {
@@ -217,15 +303,8 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
             TextButton(onClick = { vm.login(null) }, enabled = !vm.busy) { Text("別のアカウントを追加") }
             TextButton(onClick = vm::signOut, enabled = !vm.busy && vm.activeAccount != null) { Text("サインアウト") }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = vm::fetchModels, enabled = !vm.busy && vm.activeAccount?.connected == true) { Text("モデルを取得") }
-            Box {
-                OutlinedButton(onClick = { modelMenu = true }, enabled = !vm.busy && vm.models.isNotEmpty()) { Text(vm.models.firstOrNull { it.id == vm.model }?.name ?: "モデルを選択") }
-                DropdownMenu(expanded = modelMenu, onDismissRequest = { modelMenu = false }) {
-                    vm.models.forEach { model -> DropdownMenuItem(text = { Text(model.name) }, onClick = { vm.pickModel(model.id); modelMenu = false }) }
-                }
-            }
-        }
+        Text("モデルは起動・認証・アカウント切替時に自動取得します。チャット画面からも選択できます。", style = MaterialTheme.typography.bodySmall)
+        ModelSelector(vm)
         TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://chatgpt.com/settings/usage"))) }) { Text("ChatGPTで利用枠・アプリの接続を管理") }
         HorizontalDivider()
         Text("端末の権限", style = MaterialTheme.typography.titleLarge)
@@ -264,20 +343,25 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
         }
         Text("選択済み: ${remember(version) { vm.preferences.files().size }} 件")
         OutlinedButton(onClick = { vm.manualTool("list_files") }, enabled = !vm.busy) { Text("ファイル情報を確認（端末内）") }
+        if (fullAccess) OutlinedButton(onClick = { vm.manualTool("list_directory",obj("path" to ".")) }, enabled = !vm.busy && dev.komichi.agent.device.SharedStorage.granted(context)) { Text("共有ストレージを確認（端末内）") }
         HorizontalDivider()
         Text("操作を許可するアプリ", style = MaterialTheme.typography.titleLarge)
-        Text("初期状態はすべて不許可です。チェック後も操作ごとに確認します。設定・認証などの保護画面は操作できません。", style = MaterialTheme.typography.bodySmall)
-        OutlinedTextField(value = query, onValueChange = { query = it }, label = { Text("起動可能なアプリを検索") }, modifier = Modifier.fillMaxWidth())
+        Text(if (fullAccess) "全アプリが対象です。画面を持たないアプリも表示します。操作ごとの承認と保護画面の制限は維持します。" else "初期状態はすべて不許可です。チェック後も操作ごとに確認します。設定・認証などの保護画面は操作できません。", style = MaterialTheme.typography.bodySmall)
+        OutlinedTextField(value = query, onValueChange = { query = it }, label = { Text("アプリを検索") }, modifier = Modifier.fillMaxWidth())
         apps.forEach { item ->
             Row(Modifier.fillMaxWidth()) {
-                Checkbox(checked = item.packageName in allowed, onCheckedChange = { vm.preferences.allow(item.packageName,it); vm.refreshStatus() }, enabled = !vm.busy && item.packageName != context.packageName)
-                Column(Modifier.weight(1f).padding(top = 8.dp)) { Text(item.label); Text(item.packageName, style = MaterialTheme.typography.labelSmall) }
-                TextButton(onClick = { vm.manualTool("open_app",obj("package" to item.packageName)) }, enabled = !vm.busy && item.packageName in allowed) { Text("起動") }
+                Checkbox(checked = item.packageName != context.packageName && (fullAccess || item.packageName in allowed), onCheckedChange = { vm.preferences.allow(item.packageName,it); vm.refreshStatus() }, enabled = !vm.busy && !fullAccess && item.packageName != context.packageName)
+                Column(Modifier.weight(1f).padding(top = 8.dp)) { Text(item.label + if (!item.launchable) "（画面なし）" else ""); Text(item.packageName, style = MaterialTheme.typography.labelSmall) }
+                TextButton(onClick = { vm.manualTool("open_app",obj("package" to item.packageName)) }, enabled = !vm.busy && item.launchable && item.packageName != context.packageName && (fullAccess || item.packageName in allowed)) { Text("起動") }
             }
         }
         Text("表示は最大100件。検索で絞り込めます。", style = MaterialTheme.typography.bodySmall)
         Spacer(Modifier.height(24.dp))
     }
+    if (fullDisclosure) AlertDialog(onDismissRequest = { fullDisclosure = false }, title = { Text("全アクセスモードを有効にする") },
+        text = { Text("個別に選択していないアプリや今後インストールするアプリも操作対象にし、インストール済みアプリ全体を検索できるようにします。共有ストレージの一覧参照は、別途OSのファイル権限が必要です。\n\n通知、Accessibility、画面取得、Shizuku、Rootは権限一覧から本人がそれぞれ許可・確認します。このスイッチだけでOSの権限が一括付与されるわけではありません。\n\n他アプリの非公開データ、認証・権限などの保護画面、任意shellへのアクセスは追加しません。操作の個別承認と外部送信前の確認は継続します。無効にすると元のアプリ選択に戻ります。") },
+        confirmButton = { Button(onClick = { vm.preferences.setFullAccess(true); vm.refreshStatus(); fullDisclosure = false }) { Text("モードを有効にする") } },
+        dismissButton = { TextButton(onClick = { fullDisclosure = false }) { Text("キャンセル") } })
     if (disclosure) AlertDialog(onDismissRequest = { disclosure = false }, title = { Text("画面操作へのアクセス") },
         text = { Text("有効にすると、Komichiは許可したアプリの画面構造を読み取り、承認後にタップ・スクロール・文字入力・戻る・ホーム操作を行えます。画面内の情報には機密情報が含まれる場合があります。AIへの送信前に内容を確認・編集できます。常時収集は行いません。\n\nOS設定でユーザー自身が有効化してください。停止ボタンは実行中に表示されます。") },
         confirmButton = { Button(onClick = { disclosure = false; context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }) { Text("OS設定を開く") } },

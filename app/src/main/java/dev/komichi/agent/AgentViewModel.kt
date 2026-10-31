@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import dev.komichi.agent.agent.ApiFailure
 import dev.komichi.agent.agent.ResponsesClient
 import dev.komichi.agent.agent.ModelChoice
+import dev.komichi.agent.agent.ModelCatalog
 import dev.komichi.agent.agent.ToolCall
 import dev.komichi.agent.auth.Account
 import dev.komichi.agent.auth.AuthManager
@@ -53,8 +54,13 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
     var selectedId by mutableStateOf(sessions.firstOrNull()?.id ?: ""); private set
     var accounts by mutableStateOf(auth.accounts()); private set
     var activeAccount by mutableStateOf(auth.active()); private set
-    var models by mutableStateOf<List<ModelChoice>>(emptyList()); private set
-    var model by mutableStateOf(""); private set
+    private val modelCatalog = ModelCatalog(viewModelScope, { accountId ->
+        check(auth.active()?.clientId == accountId) { "アカウントが変更されました" }
+        try { api.models() } finally { refreshAccounts() }
+    }, preferences::selectedModel, preferences::setSelectedModel, ::safeError)
+    val modelCatalogState = modelCatalog.state
+    val models get() = modelCatalogState.value.models
+    val model get() = modelCatalogState.value.selected
     var busy by mutableStateOf(false); private set
     var status by mutableStateOf("端末内の準備ができました。AI利用には認証してください"); private set
     var partial by mutableStateOf(""); private set
@@ -66,9 +72,11 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
         RuntimeControl.stop = { stop() }
         LoginControl.cancel = { authJob?.cancel() }
         if (sessions.isEmpty()) newConversation()
+        if (activeAccount?.connected == true) status = "保存済みのChatGPTアカウントを使用します"
+        fetchModels()
     }
     fun refreshStatus() { privilegeVersion++ }
-    fun pickModel(id: String) { if (!busy && models.any { it.id == id }) model = id }
+    fun pickModel(id: String) { if (!busy) modelCatalog.select(id) }
     fun newConversation() {
         if (busy) return
         val conversation = Conversation(accountId = auth.active()?.clientId ?: "")
@@ -89,15 +97,17 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
     private fun refreshAccounts() { accounts = auth.accounts(); activeAccount = auth.active() }
     fun login(account: Account? = null) {
         if (busy) return
+        modelCatalog.clear()
         busy = true; status = "ブラウザでChatGPTへの認証を完了してください"
         authJob = viewModelScope.launch {
+            var authenticated = false
             try {
-                auth.login(account); refreshAccounts(); models = emptyList(); model = ""
+                auth.login(account); refreshAccounts(); authenticated = true
                 if (current?.input?.length() != 0) newConversationAfterAuth()
-                status = "認証情報を検証しました。モデルを取得してください"
+                status = "認証情報を検証しました"
             } catch (_: CancellationException) { status = "認証を中止しました" }
               catch (e: Exception) { status = safeError(e) }
-            finally { refreshAccounts(); busy = false; authJob = null }
+            finally { refreshAccounts(); busy = false; authJob = null; if (authenticated) fetchModels() }
         }
     }
     private fun newConversationAfterAuth() {
@@ -106,25 +116,22 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
     }
     fun selectAccount(id: String) {
         if (busy) return
-        auth.select(id); refreshAccounts(); models = emptyList(); model = ""; newConversation(); status = "アカウントを選択しました。モデルを取得してください"
+        modelCatalog.clear(); auth.select(id); refreshAccounts(); newConversation(); status = "アカウントを選択しました"; fetchModels()
     }
     fun signOut() {
         if (busy) return
+        modelCatalog.clear()
         busy = true
         authJob = viewModelScope.launch {
             try { val revoked = auth.signOut(); status = if (revoked) "サインアウトしました" else "端末内の認証情報を削除しました。リモート失効は未確認です。ChatGPT設定から切断できます" }
             catch (e: Exception) { status = safeError(e) }
-            finally { models = emptyList(); model = ""; refreshAccounts(); busy = false; authJob = null }
+            finally { refreshAccounts(); busy = false; authJob = null }
         }
     }
     fun fetchModels() {
         if (busy) return
-        busy = true; status = "アカウントのモデルを取得しています"
-        authJob = viewModelScope.launch {
-            try { models = api.models(); model = models.firstOrNull()?.id ?: ""; status = if (models.isEmpty()) "利用可能なモデルがありません。有料APIには切り替えません" else "モデルを取得しました。推論の利用可否は最初の応答で確認します" }
-            catch (e: Exception) { status = safeError(e) }
-            finally { refreshAccounts(); busy = false; authJob = null }
-        }
+        val account = auth.active()?.takeIf { it.connected } ?: return
+        modelCatalog.refresh(account.clientId)
     }
     private fun beginRun() {
         RuntimeControl.sessionId = UUID.randomUUID().toString()
@@ -136,7 +143,7 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
         RuntimeControl.running = false; AgentAccessibilityService.instance?.showStop(false)
         gate.cancel(); app.stopService(Intent(app, RunService::class.java)); busy = false; partial = ""
     }
-    fun stop() { RuntimeControl.running = false; gate.cancel(); job?.cancel(); authJob?.cancel(); CaptureStore.cancel?.invoke(); status = "停止しました。開始済み操作は取り消せない場合があります" }
+    fun stop() { RuntimeControl.running = false; gate.cancel(); job?.cancel(); authJob?.cancel(); modelCatalog.cancelRefresh(); CaptureStore.cancel?.invoke(); status = "停止しました。開始済み操作は取り消せない場合があります" }
     fun send(userText: String) {
         if (busy || userText.isBlank()) return
         if (model.isBlank()) { status = "認証後にモデルを取得・選択してください"; return }

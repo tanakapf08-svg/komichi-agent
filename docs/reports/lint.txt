@@ -1,3 +1,37 @@
+.\app\src\main\AndroidManifest.xml:12: Warning: The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE [ScopedStorage]
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ScopedStorage":
+   Scoped storage is enforced on Android 10+ (or Android 11+ if using
+   requestLegacyExternalStorage). In particular, WRITE_EXTERNAL_STORAGE will
+   no longer provide write access to all files; it will provide the equivalent
+   of READ_EXTERNAL_STORAGE instead.
+
+   As of Android 13, if you need to query or interact with MediaStore or media
+   files on the shared storage, you should be using instead one or more new
+   storage permissions:
+   * android.permission.READ_MEDIA_IMAGES
+   * android.permission.READ_MEDIA_VIDEO
+   * android.permission.READ_MEDIA_AUDIO
+
+   and then add maxSdkVersion="33" to the older permission. See the developer
+   guide for how to do this:
+   https://developer.android.com/about/versions/13/behavior-changes-13#granula
+   r-media-permissions
+
+   The MANAGE_EXTERNAL_STORAGE permission can be used to manage all files, but
+   it is rarely necessary and most apps on Google Play are not allowed to use
+   it. Most apps should instead migrate to use scoped storage. To modify or
+   delete files, apps should request write access from the user as described
+   at https://goo.gle/android-mediastore-createwriterequest.
+
+   To learn more, read these resources: Play policy:
+   https://goo.gle/policy-storage-help Allowable use cases:
+   https://goo.gle/policy-storage-usecases
+
+   https://goo.gle/android-storage-usecases
+
 .\app\build.gradle.kts:12: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
         targetSdk = 36
         ~~~~~~~~~~~~~~
@@ -105,7 +139,36 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    MavenCentral dependency, and connects to the library every time, which
    makes it more flexible but also much slower.
 
-.\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:61: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+.\app\src\main\java\dev\komichi\agent\MainActivity.kt:184: Warning: Modifier parameter should be the first optional parameter [ModifierParameter from androidx.compose.ui]
+    onChoose: (String) -> Unit, onReload: () -> Unit, onConnect: (() -> Unit)? = null, modifier: Modifier = Modifier) {
+                                                                                       ~~~~~~~~
+
+   Explanation for issues of type "ModifierParameter":
+   The first (or only) Modifier parameter in a Composable function should
+   follow the following rules:
+   - Be named modifier
+   - Have a type of Modifier
+   - Either have no default value, or have a default value of Modifier
+   - If optional, be the first optional parameter in the parameter list
+
+   Vendor: Jetpack Compose
+   Identifier: androidx.compose.ui
+   Feedback: https://issuetracker.google.com/issues/new?component=612128
+
+.\app\src\main\java\dev\komichi\agent\device\PermissionStatus.kt:26: Warning: Unnecessary; Build.VERSION.SDK_INT < 34 is always true here (SDK_INT ≥ 26 and < 28) [ObsoleteSdkInt]
+            (Build.VERSION.SDK_INT < 34 || context.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE) == PackageManager.PERMISSION_GRANTED)
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+.\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:67: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
     var privilegeVersion by mutableStateOf(0); private set
                             ~~~~~~~~~~~~~~
 
@@ -136,13 +199,16 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
 .\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:185: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
             require(Uri.parse(endpoint).host == "auth.openai.com")
                     ~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:69: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+.\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:76: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                         val uri = Uri.parse(raw)
                                   ~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\MainActivity.kt:229: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+.\app\src\main\java\dev\komichi\agent\MainActivity.kt:79: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+                val specific = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, android.net.Uri.parse("package:$packageName"))
+                                                                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\app\src\main\java\dev\komichi\agent\MainActivity.kt:308: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
         TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://chatgpt.com/settings/usage"))) }) { Text("ChatGPTで利用枠・アプリの接続を管理") }
                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\MainActivity.kt:261: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+.\app\src\main\java\dev\komichi\agent\MainActivity.kt:340: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                 vm.preferences.files().forEach { raw -> runCatching { context.contentResolver.releasePersistableUriPermission(android.net.Uri.parse(raw), Intent.FLAG_GRANT_READ_URI_PERMISSION) } }
                                                                                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
 .\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:69: Warning: Use the KTX function createBitmap instead? [UseKtx]
@@ -208,7 +274,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    </lint>
    ```
 
-.\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:187: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+.\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:188: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             addView(android.widget.TextView(this@AgentAccessibilityService).apply { text = "内容を編集して機密情報を除いてください。確認済みの会話履歴とともにOpenAIへ送信します。" })
                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -225,4 +291,4 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-0 errors, 25 warnings, 1 hint
+0 errors, 29 warnings, 1 hint

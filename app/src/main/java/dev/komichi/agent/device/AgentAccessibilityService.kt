@@ -20,6 +20,7 @@ import dev.komichi.agent.security.Approval
 import dev.komichi.agent.security.ApprovalGate
 import dev.komichi.agent.security.Privacy
 import dev.komichi.agent.security.RuntimeControl
+import dev.komichi.agent.security.AppAccessPolicy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -55,7 +56,7 @@ class AgentAccessibilityService: AccessibilityService() {
         RuntimeControl.requireRunning()
         val node = rootInActiveWindow ?: error("画面情報を取得できません")
         val pkg = node.packageName?.toString() ?: error("対象アプリを特定できません")
-        require(pkg != packageName && pkg in prefs.allowed() && !protectedPackage(pkg)) { "この画面は操作許可対象ではありません" }
+        require(AppAccessPolicy.allows(pkg, packageName, prefs.fullAccessEnabled(), prefs.allowed()) && !protectedPackage(pkg)) { "この画面は操作許可対象ではありません" }
         return node
     }
     fun requireAllowedForeground() { root().recycle() }
