@@ -246,6 +246,7 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
     var query by rememberSaveable { mutableStateOf("") }
     var localError by remember { mutableStateOf("") }
     var fullDisclosure by remember { mutableStateOf(false) }
+    var rootFilesDialog by remember { mutableStateOf(false) }
     var permissionsExpanded by rememberSaveable { mutableStateOf(false) }
     val fullAccess = remember(version) { vm.preferences.fullAccessEnabled() }
     val allowed = remember(version) { vm.preferences.allowed() }
@@ -330,6 +331,7 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
             Text("Root連携を許可する", Modifier.padding(top = 12.dp))
         }
         OutlinedButton(onClick = { vm.manualTool("check_root_status") }, enabled = !vm.busy && vm.preferences.rootEnabled()) { Text("Root UIDを確認（端末内）") }
+        OutlinedButton(onClick = { rootFilesDialog = true }, enabled = !vm.busy && vm.preferences.rootEnabled()) { Text("内部データの一覧・コピー") }
         if (localError.isNotBlank()) Text(localError, color = MaterialTheme.colorScheme.error)
         HorizontalDivider()
         Text("ファイルの参照", style = MaterialTheme.typography.titleLarge)
@@ -359,7 +361,7 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
         Spacer(Modifier.height(24.dp))
     }
     if (fullDisclosure) AlertDialog(onDismissRequest = { fullDisclosure = false }, title = { Text("全アクセスモードを有効にする") },
-        text = { Text("個別に選択していないアプリや今後インストールするアプリも操作対象にし、インストール済みアプリ全体を検索できるようにします。共有ストレージの一覧参照は、別途OSのファイル権限が必要です。\n\n通知、Accessibility、画面取得、Shizuku、Rootは権限一覧から本人がそれぞれ許可・確認します。このスイッチだけでOSの権限が一括付与されるわけではありません。\n\n他アプリの非公開データ、認証・権限などの保護画面、任意shellへのアクセスは追加しません。操作の個別承認と外部送信前の確認は継続します。無効にすると元のアプリ選択に戻ります。") },
+        text = { Text("個別に選択していないアプリや今後インストールするアプリも操作対象にし、インストール済みアプリ全体を検索できるようにします。共有ストレージの一覧参照は、別途OSのファイル権限が必要です。\n\n通知、Accessibility、画面取得、Shizuku、Rootは権限一覧から本人がそれぞれ許可・確認します。このスイッチだけでOSの権限が一括付与されるわけではありません。\n\n内部データの一覧・ローカルコピーは別途Root連携と操作ごとの承認が必要です。認証・権限などの保護画面や任意shellへのアクセスは追加しません。外部送信前の確認も継続します。無効にすると元のアプリ選択に戻ります。") },
         confirmButton = { Button(onClick = { vm.preferences.setFullAccess(true); vm.refreshStatus(); fullDisclosure = false }) { Text("モードを有効にする") } },
         dismissButton = { TextButton(onClick = { fullDisclosure = false }) { Text("キャンセル") } })
     if (disclosure) AlertDialog(onDismissRequest = { disclosure = false }, title = { Text("画面操作へのアクセス") },
@@ -367,9 +369,29 @@ fun KomichiUi(vm: AgentViewModel, onPickFiles: () -> Unit, onNotifications: () -
         confirmButton = { Button(onClick = { disclosure = false; context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }) { Text("OS設定を開く") } },
         dismissButton = { TextButton(onClick = { disclosure = false }) { Text("閉じる") } })
     if (rootDisclosure) AlertDialog(onDismissRequest = { rootDisclosure = false }, title = { Text("Root機能を有効にする") },
-        text = { Text("Root管理アプリへの許可要求が発生することがあります。機能は固定のUID確認と、許可済み一般アプリの強制停止に限定しています。操作ごとに対象と影響を確認します。Rootがなくても通常機能は利用できます。") },
+        text = { Text("Root管理アプリへの許可要求が発生することがあります。UID確認、許可済みアプリの内部データの一覧・端末内コピー、一般アプリの強制停止を利用できます。\n\n内部データはログイン状態や個人情報を含む場合があります。操作ごとに対象・コピー元・保存先を確認します。ファイル内容はAIへ送信しません。コピー元は変更せず、保存先は新規作成のみです。任意shellやシステムファイルの変更はできません。Rootがなくても通常機能は利用できます。") },
         confirmButton = { Button(onClick = { vm.preferences.setRoot(true); vm.refreshStatus(); rootDisclosure = false }) { Text("有効にする") } },
         dismissButton = { TextButton(onClick = { rootDisclosure = false }) { Text("キャンセル") } })
+    if (rootFilesDialog) RootFilesDialog(onDismiss = { rootFilesDialog = false }, onRun = { name,args -> rootFilesDialog = false; vm.manualTool(name,args) })
+}
+
+@Composable internal fun RootFilesDialog(onDismiss: () -> Unit, onRun: (String,org.json.JSONObject) -> Unit) {
+    var pkg by rememberSaveable { mutableStateOf("") }
+    var source by rememberSaveable { mutableStateOf(".") }
+    var destination by rememberSaveable { mutableStateOf("Download/app-backup") }
+    var tar by rememberSaveable { mutableStateOf(false) }
+    AlertDialog(onDismissRequest = onDismiss, title = { Text("Rootで内部データを操作") }, text = {
+        Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("対象アプリを個別に許可するか、全アクセスモードを有効にしてください。実行前に対象と影響を再確認します。結果はチャットに表示し、AIへ送信しません。")
+            OutlinedTextField(pkg,{ pkg = it.take(256) },label = { Text("対象パッケージ名") },singleLine = true)
+            OutlinedTextField(source,{ source = it.take(1024) },label = { Text("コピー元（. はアプリの内部領域全体）") },singleLine = true)
+            OutlinedTextField(destination,{ destination = it.take(1024) },label = { Text("新しい保存先（共有ストレージ内）") },singleLine = true)
+            Row { Checkbox(tar,{ tar = it }); Text("TAR形式（保存先を.tarにする）",Modifier.padding(top = 12.dp)) }
+            Text("稼働中のアプリはデータが変化する場合があります。必要なら先に終了してください。失敗・停止時には不完全なコピーが残る場合があります。",style = MaterialTheme.typography.bodySmall)
+            OutlinedButton(onClick = { onRun("list_app_data",obj("package" to pkg.trim(),"path" to source)) },enabled = pkg.isNotBlank() && source.isNotBlank()) { Text("一覧を確認") }
+        }
+    },confirmButton = { Button(onClick = { onRun("copy_app_data",obj("package" to pkg.trim(),"source_path" to source,"destination" to destination,"format" to if (tar) "tar" else "directory")) },enabled = pkg.isNotBlank() && source.isNotBlank() && destination.isNotBlank()) { Text("コピー内容を確認") } },
+    dismissButton = { TextButton(onClick = onDismiss) { Text("閉じる") } })
 }
 
 @Composable private fun LogsPane(vm: AgentViewModel) {

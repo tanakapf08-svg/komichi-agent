@@ -1,0 +1,12 @@
+PASS list includes hidden entries
+PASS directory copy bytes, hidden/quoted names and completion
+PASS directory rejects DESTINATION_EXISTS
+PASS symlink-source rejects SOURCE_SCOPE
+PASS symlink-destination rejects DESTINATION_SYMLINK
+PASS tar copy bytes and preserves symlink without following it
+PASS expired execution lease creates no copy
+PASS shell metacharacters are literal destination names
+PASS individual file copy bytes
+PASS individual file tar copy bytes
+PASS source bytes remain unchanged: 4e71d648c0792a04f4317ddb5d7e59f9c44810d886e384514a3960f7a7a6fbd7  /data/user/0/dev.komichi.rootfixture/files/note.txt
+ROOT_FILE_INTEGRATION_OK

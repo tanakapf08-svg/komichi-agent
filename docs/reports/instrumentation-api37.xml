@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="5" failures="0" errors="0" skipped="0" time="28.577" timestamp="2026-10-31T07:56:56" hostname="localhost">
+  <testsuite name="dev.komichi.agent.LocalSmokeTest" tests="5" failures="0" errors="0" skipped="0" time="27.321" timestamp="2026-10-31T07:56:56" hostname="localhost">
+    <properties>
+      <property name="device" value="Medium_Phone_API_37.0(AVD) - 17" />
+      <property name="flavor" value="" />
+      <property name="project" value=":app" />
+    </properties>
+    <testcase name="rootFileFormRequiresAnAppAndEmitsOnlyStructuredArguments" classname="dev.komichi.agent.LocalSmokeTest" time="9.233" />
+    <testcase name="permissionPanelReportsUnverifiedRootAndFullModeNeedsExplicitConfirmation" classname="dev.komichi.agent.LocalSmokeTest" time="10.591" />
+    <testcase name="startsWithoutCredentialsOrPrivilegedServicesAndSettingsSurviveRecreation" classname="dev.komichi.agent.LocalSmokeTest" time="3.05" />
+    <testcase name="keystoreVaultEncryptsAndDetectsTampering" classname="dev.komichi.agent.LocalSmokeTest" time="2.653" />
+    <testcase name="chatModelPickerChangesTheSelectedModelWithoutANetworkCall" classname="dev.komichi.agent.LocalSmokeTest" time="1.794" />
+  </testsuite>
+</testsuites>

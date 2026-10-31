@@ -28,6 +28,7 @@ class UserDenied: Exception("ユーザーが拒否したため停止しました
 
 class DeviceBroker(private val context: Context, private val preferences: DevicePreferences,
     private val gate: ApprovalGate, private val audit: AuditLog, val shizuku: ShizukuBridge) {
+    private val rootFiles = RootFileOperations(context,preferences)
     fun apps(query: String = ""): List<LaunchableApp> {
         val pm = context.packageManager
         val launchable = pm.queryIntentActivities(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER), 0)
@@ -50,16 +51,19 @@ class DeviceBroker(private val context: Context, private val preferences: Device
         audit.add(call.name, "requested")
         try {
             val a = call.arguments
-            val mutating = call.name in setOf("open_app", "open_settings", "tap_element", "swipe_screen", "scroll_screen", "input_text", "navigate_back", "navigate_home", "check_root_status", "system_diagnostics", "force_stop_app")
+            val mutating = call.name in setOf("open_app", "open_settings", "tap_element", "swipe_screen", "scroll_screen", "input_text", "navigate_back", "navigate_home", "check_root_status", "system_diagnostics", "force_stop_app", "list_app_data", "copy_app_data")
             if (a.has("package")) allowedPackage(a.getString("package"))
+            val copyPlan = if (call.name == "copy_app_data") rootFiles.plan(a.getString("package"),a.getString("source_path"),a.getString("destination"),a.getString("format")) else null
+            if (call.name in setOf("list_app_data","copy_app_data")) require(preferences.rootEnabled()) { "内部データ操作には「接続・権限」でRoot連携を有効にしてください" }
             if (call.name == "force_stop_app") require(!allowedPackage(a.getString("package")).system) { "システムアプリは停止できません" }
             if (mutating) {
-                val effect = if (call.name == "force_stop_app") "対象アプリを強制停止します。未保存データが失われる可能性があります。" else "指定されたAndroid操作を1回実行します。"
+                val effect = if (copyPlan != null) rootFiles.describe(copyPlan) else if (call.name == "list_app_data") "対象アプリの内部データ領域をRootで一覧取得します。ファイルの中身は読み取り・送信しません。" else if (call.name == "force_stop_app") "対象アプリを強制停止します。未保存データが失われる可能性があります。" else "指定されたAndroid操作を1回実行します。"
                 val screenTarget = if (call.name in setOf("tap_element", "swipe_screen", "scroll_screen", "input_text", "navigate_back", "navigate_home")) accessibility().describeOperation(call.name,a) else ""
                 if (gate.ask("操作を確認: ${call.name}", "$effect\n$screenTarget\n\n対象と引数:\n${a.toString(2)}") == null) throw UserDenied()
             }
             RuntimeControl.requireRunning(); currentCoroutineContext().ensureActive()
-            val result = withTimeout(10_000) {
+            val timeout = if (call.name == "copy_app_data") 190_000L else if (call.name == "list_app_data") 30_000L else 10_000L
+            val result = withTimeout(timeout) {
                 when (call.name) {
                     "search_apps" -> withContext(Dispatchers.IO) { obj("untrusted_observation" to true, "apps" to array(apps(a.getString("query")).take(100).map { obj("package" to it.packageName, "label" to Privacy.mask(it.label), "launchable" to it.launchable) })) }
                     "open_app" -> withContext(Dispatchers.Main) {
@@ -82,6 +86,11 @@ class DeviceBroker(private val context: Context, private val preferences: Device
                     })) }
                     "read_screen" -> accessibility().readScreen()
                     "list_directory" -> withContext(Dispatchers.IO) { SharedStorage.list(context,preferences,a.getString("path")) }
+                    "list_app_data", "copy_app_data" -> {
+                        try {
+                            if (copyPlan != null) rootFiles.copy(copyPlan) else rootFiles.list(a.getString("package"),a.getString("path"))
+                        } catch (e: RootFileFailure) { obj("status" to "failed","code" to e.code,"detail" to e.diagnostic,"contents_sent_to_ai" to false) }
+                    }
                     "tap_element", "swipe_screen", "scroll_screen", "input_text", "navigate_back", "navigate_home" -> accessibility().operate(call.name,a)
                     "check_shizuku_status" -> shizuku.status()
                     "system_diagnostics" -> obj("untrusted_observation" to true, "diagnostics" to shizuku.run())
@@ -100,7 +109,7 @@ class DeviceBroker(private val context: Context, private val preferences: Device
                 }
             }
             currentCoroutineContext().ensureActive(); RuntimeControl.requireRunning()
-            audit.add(call.name, "executed")
+            audit.add(call.name, if (result.optString("status") == "failed") "failed" else "executed")
             // Untrusted labels and filenames are masked at collection time. Do not
             // redact structural snapshot/element identifiers or the next call cannot use them.
             val masked = result.toString(2)

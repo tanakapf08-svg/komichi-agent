@@ -8,6 +8,8 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.komichi.agent.data.Vault
 import dev.komichi.agent.data.obj
@@ -76,5 +78,25 @@ class LocalSmokeTest {
             bytes[bytes.lastIndex] = (bytes.last().toInt() xor 1).toByte(); file.writeBytes(bytes)
             assertTrue(runCatching { vault.read(name) }.isFailure)
         } finally { file.delete() }
+    }
+    @Test fun rootFileFormRequiresAnAppAndEmitsOnlyStructuredArguments() {
+        var submitted: Pair<String,org.json.JSONObject>? = null
+        compose.activityRule.scenario.onActivity { activity -> activity.setContent {
+            MaterialTheme { RootFilesDialog(onDismiss = {},onRun = { name,args -> submitted = name to args }) }
+        } }
+        compose.onNodeWithText("コピー内容を確認").assertIsNotEnabled()
+        compose.onNodeWithText("対象パッケージ名").performTextInput("com.example.fixture")
+        compose.onNodeWithText("一覧を確認").performScrollTo().performClick()
+        compose.runOnIdle {
+            assertEquals("list_app_data",submitted!!.first)
+            assertEquals("com.example.fixture",submitted!!.second.getString("package"))
+            assertEquals(".",submitted!!.second.getString("path"))
+        }
+        compose.onNodeWithText("コピー内容を確認").performClick()
+        compose.runOnIdle {
+            assertEquals("copy_app_data",submitted!!.first)
+            assertEquals("directory",submitted!!.second.getString("format"))
+            assertEquals("Download/app-backup",submitted!!.second.getString("destination"))
+        }
     }
 }

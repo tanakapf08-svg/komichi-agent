@@ -2,6 +2,8 @@
 
 Komichi Agent's original code is MIT-licensed. No source code from the five comparison repositories was copied. Their licenses do not grant rights to their names, logos, or OAuth client registrations.
 
+Operit (LGPL-3.0, https://github.com/AAswordman/Operit) was also consulted for its permission-based file-tool routing architecture at commit dbf71916fae9750cfdc9f9a774f5a0fee56633fb. No Operit source code or assets were copied or bundled. See docs/root-file-operations.md for the referenced files and the independently implemented scope.
+
 The Android app uses these separately licensed dependencies, including transitive dependencies resolved by Gradle:
 
 | Component | License | Upstream |

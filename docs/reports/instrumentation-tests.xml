@@ -1,14 +1,15 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<testsuites tests="4" failures="0" errors="0" skipped="0" time="20.015" timestamp="2026-10-31T07:29:12" hostname="localhost">
-  <testsuite name="dev.komichi.agent.LocalSmokeTest" tests="4" failures="0" errors="0" skipped="0" time="18.764" timestamp="2026-10-31T07:29:12" hostname="localhost">
+<testsuites tests="5" failures="0" errors="0" skipped="0" time="12.592" timestamp="2026-10-31T08:00:23" hostname="localhost">
+  <testsuite name="dev.komichi.agent.LocalSmokeTest" tests="5" failures="0" errors="0" skipped="0" time="11.318" timestamp="2026-10-31T08:00:23" hostname="localhost">
     <properties>
-      <property name="device" value="Medium_Phone_API_37.0(AVD) - 17" />
+      <property name="device" value="Komichi_Root_API30(AVD) - 11" />
       <property name="flavor" value="" />
       <property name="project" value=":app" />
     </properties>
-    <testcase name="permissionPanelReportsUnverifiedRootAndFullModeNeedsExplicitConfirmation" classname="dev.komichi.agent.LocalSmokeTest" time="12.533" />
-    <testcase name="startsWithoutCredentialsOrPrivilegedServicesAndSettingsSurviveRecreation" classname="dev.komichi.agent.LocalSmokeTest" time="2.846" />
-    <testcase name="keystoreVaultEncryptsAndDetectsTampering" classname="dev.komichi.agent.LocalSmokeTest" time="1.291" />
-    <testcase name="chatModelPickerChangesTheSelectedModelWithoutANetworkCall" classname="dev.komichi.agent.LocalSmokeTest" time="2.094" />
+    <testcase name="rootFileFormRequiresAnAppAndEmitsOnlyStructuredArguments" classname="dev.komichi.agent.LocalSmokeTest" time="3.978" />
+    <testcase name="permissionPanelReportsUnverifiedRootAndFullModeNeedsExplicitConfirmation" classname="dev.komichi.agent.LocalSmokeTest" time="3.972" />
+    <testcase name="startsWithoutCredentialsOrPrivilegedServicesAndSettingsSurviveRecreation" classname="dev.komichi.agent.LocalSmokeTest" time="1.548" />
+    <testcase name="keystoreVaultEncryptsAndDetectsTampering" classname="dev.komichi.agent.LocalSmokeTest" time="0.751" />
+    <testcase name="chatModelPickerChangesTheSelectedModelWithoutANetworkCall" classname="dev.komichi.agent.LocalSmokeTest" time="1.069" />
   </testsuite>
 </testsuites>

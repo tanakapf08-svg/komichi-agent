@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dev.komichi.agent.RootFilesTest" tests="5" skipped="0" failures="0" errors="0" timestamp="2026-10-31T08:00:06.121Z" hostname="SOICHIROPC" time="0.022">
+  <properties/>
+  <testcase name="destinationsAreNewSharedStoragePathsAndFormatsAreExplicit" classname="dev.komichi.agent.RootFilesTest" time="0.002"/>
+  <testcase name="catalogRequiresStructuredRootArgumentsAndRejectsExtraCommands" classname="dev.komichi.agent.RootFilesTest" time="0.0"/>
+  <testcase name="exportsProductionTemplatesForAndroidUidZeroIntegrationChecks" classname="dev.komichi.agent.RootFilesTest" time="0.016"/>
+  <testcase name="rejectsOtherAppsTraversalAndInvalidPackageRoots" classname="dev.komichi.agent.RootFilesTest" time="0.002"/>
+  <testcase name="privatePathsUseInstalledAppRootsIncludingDeviceProtectedStorage" classname="dev.komichi.agent.RootFilesTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

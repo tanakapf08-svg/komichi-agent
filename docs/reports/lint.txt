@@ -1,4 +1,4 @@
-.\app\src\main\AndroidManifest.xml:12: Warning: The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE [ScopedStorage]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\AndroidManifest.xml:12: Warning: The Google Play store has a policy that limits usage of MANAGE_EXTERNAL_STORAGE [ScopedStorage]
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -32,7 +32,7 @@
 
    https://goo.gle/android-storage-usecases
 
-.\app\build.gradle.kts:12: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:12: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
         targetSdk = 36
         ~~~~~~~~~~~~~~
 
@@ -54,10 +54,56 @@
 
    https://developer.android.com/distribute/best-practices/develop/target-sdk.html
 
-.\app\src\main\res\xml\accessibility_service.xml:6: Warning: Attribute canTakeScreenshot is only used in API level 30 and higher (current min is 26) [UnusedAttribute]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:26: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+            require(root.matches(Regex("/data/(?:user|user_de)/[0-9]+/" + Regex.escape(packageName))) || root == "/data/data/$packageName") { "対応していないアプリデータ領域です" }
+                                                                                                                  ~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:30: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if ("/data/user/0/$packageName" in roots) aliases += "/data/data/$packageName" to "/data/user/0/$packageName"
+             ~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:30: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if ("/data/user/0/$packageName" in roots) aliases += "/data/data/$packageName" to "/data/user/0/$packageName"
+                                                              ~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:30: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if ("/data/user/0/$packageName" in roots) aliases += "/data/data/$packageName" to "/data/user/0/$packageName"
+                                                                                           ~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:31: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if ("/data/data/$packageName" in roots) aliases += "/data/user/0/$packageName" to "/data/data/$packageName"
+             ~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:31: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if ("/data/data/$packageName" in roots) aliases += "/data/user/0/$packageName" to "/data/data/$packageName"
+                                                            ~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:31: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if ("/data/data/$packageName" in roots) aliases += "/data/user/0/$packageName" to "/data/data/$packageName"
+                                                                                           ~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:38: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if (root == "/data/user/0/$packageName") canonicalRoots += "/data/data/$packageName"
+                     ~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:38: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if (root == "/data/user/0/$packageName") canonicalRoots += "/data/data/$packageName"
+                                                                    ~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:39: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if (root == "/data/data/$packageName") canonicalRoots += "/data/user/0/$packageName"
+                     ~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:39: Warning: Do not hardcode "/data/"; use Context.getFilesDir().getPath() instead [SdCardPath]
+        if (root == "/data/data/$packageName") canonicalRoots += "/data/user/0/$packageName"
+                                                                  ~~~~~~~~~~~~~
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AppDataPaths.kt:47: Warning: Do not hardcode "/sdcard/"; use Environment.getExternalStorageDirectory().getPath() instead [SdCardPath]
+        for (alias in listOf("/sdcard","/storage/self/primary")) {
+                              ~~~~~~~
+
+   Explanation for issues of type "SdCardPath":
+   Your code should not reference the /sdcard path directly; instead use
+   Environment.getExternalStorageDirectory().getPath().
+
+   Similarly, do not reference the /data/data/ path directly; it can vary in
+   multi-user scenarios. Instead, use Context.getFilesDir().getPath().
+
+   https://developer.android.com/training/data-storage#filesExternal
+
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\res\xml\accessibility_service.xml:6: Warning: Attribute canTakeScreenshot is only used in API level 30 and higher (current min is 26) [UnusedAttribute]
     android:canTakeScreenshot="false" android:isAccessibilityTool="false"
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\res\xml\accessibility_service.xml:6: Warning: Attribute isAccessibilityTool is only used in API level 31 and higher (current min is 26) [UnusedAttribute]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\res\xml\accessibility_service.xml:6: Warning: Attribute isAccessibilityTool is only used in API level 31 and higher (current min is 26) [UnusedAttribute]
     android:canTakeScreenshot="false" android:isAccessibilityTool="false"
                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -78,7 +124,7 @@
    can be unused too, such as the new <tag> element in layouts introduced in
    API 21.
 
-.\gradle\wrapper\gradle-wrapper.properties:3: Warning: A newer version of Gradle than 9.3.1 is available: 9.8.2 [AndroidGradlePluginVersion]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\gradle\wrapper\gradle-wrapper.properties:3: Warning: A newer version of Gradle than 9.3.1 is available: 9.8.2 [AndroidGradlePluginVersion]
 distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -89,19 +135,19 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    with an older version. However, you may simply not be aware that a more
    recent version is available, and that is what this lint check helps find.
 
-.\app\build.gradle.kts:27: Warning: A newer version of androidx.compose:compose-bom than 2025.04.01 is available: 2026.09.00 [GradleDependency]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:27: Warning: A newer version of androidx.compose:compose-bom than 2025.04.01 is available: 2026.09.00 [GradleDependency]
     implementation(platform("androidx.compose:compose-bom:2025.04.01"))
                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:28: Warning: A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.13.0 [GradleDependency]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:28: Warning: A newer version of androidx.activity:activity-compose than 1.10.1 is available: 1.13.0 [GradleDependency]
     implementation("androidx.activity:activity-compose:1.10.1")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:33: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:33: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:34: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:34: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-compose than 2.9.0 is available: 2.11.0 [GradleDependency]
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.0")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:45: Warning: A newer version of androidx.compose:compose-bom than 2025.04.01 is available: 2026.09.00 [GradleDependency]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:45: Warning: A newer version of androidx.compose:compose-bom than 2025.04.01 is available: 2026.09.00 [GradleDependency]
     androidTestImplementation(platform("androidx.compose:compose-bom:2025.04.01"))
                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -112,22 +158,22 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    However, you may simply not be aware that a more recent version is
    available, and that is what this lint check helps find.
 
-.\app\build.gradle.kts:35: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:35: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:36: Warning: A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:36: Warning: A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:37: Warning: A newer version of com.nimbusds:nimbus-jose-jwt than 10.5 is available: 10.10 [NewerVersionAvailable]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:37: Warning: A newer version of com.nimbusds:nimbus-jose-jwt than 10.5 is available: 10.10 [NewerVersionAvailable]
     implementation("com.nimbusds:nimbus-jose-jwt:10.5")
                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:42: Warning: A newer version of org.json:json than 20250517 is available: 20260814 [NewerVersionAvailable]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:42: Warning: A newer version of org.json:json than 20250517 is available: 20260814 [NewerVersionAvailable]
     testImplementation("org.json:json:20250517")
                        ~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:43: Warning: A newer version of com.squareup.okhttp3:mockwebserver than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:43: Warning: A newer version of com.squareup.okhttp3:mockwebserver than 4.12.0 is available: 5.5.1 [NewerVersionAvailable]
     testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\build.gradle.kts:44: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\build.gradle.kts:44: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-test than 1.10.2 is available: 1.11.0 [NewerVersionAvailable]
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -139,7 +185,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    MavenCentral dependency, and connects to the library every time, which
    makes it more flexible but also much slower.
 
-.\app\src\main\java\dev\komichi\agent\MainActivity.kt:184: Warning: Modifier parameter should be the first optional parameter [ModifierParameter from androidx.compose.ui]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:184: Warning: Modifier parameter should be the first optional parameter [ModifierParameter from androidx.compose.ui]
     onChoose: (String) -> Unit, onReload: () -> Unit, onConnect: (() -> Unit)? = null, modifier: Modifier = Modifier) {
                                                                                        ~~~~~~~~
 
@@ -155,7 +201,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    Identifier: androidx.compose.ui
    Feedback: https://issuetracker.google.com/issues/new?component=612128
 
-.\app\src\main\java\dev\komichi\agent\device\PermissionStatus.kt:26: Warning: Unnecessary; Build.VERSION.SDK_INT < 34 is always true here (SDK_INT ≥ 26 and < 28) [ObsoleteSdkInt]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\PermissionStatus.kt:26: Warning: Unnecessary; Build.VERSION.SDK_INT < 34 is always true here (SDK_INT ≥ 26 and < 28) [ObsoleteSdkInt]
             (Build.VERSION.SDK_INT < 34 || context.checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE_SPECIAL_USE) == PackageManager.PERMISSION_GRANTED)
              ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -168,7 +214,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    where the version qualifier is less than or equal to the minSdkVersion,
    where the contents should be merged into the best folder.
 
-.\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:67: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\AgentViewModel.kt:71: Hint: Prefer mutableIntStateOf instead of mutableStateOf [AutoboxingStateCreation from androidx.compose.runtime]
     var privilegeVersion by mutableStateOf(0); private set
                             ~~~~~~~~~~~~~~
 
@@ -187,34 +233,34 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    Identifier: androidx.compose.runtime
    Feedback: https://issuetracker.google.com/issues/new?component=612128
 
-.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:67: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:67: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
             val uri = Uri.parse(AUTHORIZE).buildUpon()
                       ~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:96: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:96: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                             val candidate = if (parts.size == 3 && parts[0] == "GET" && parts[1].startsWith("/auth/callback?")) Uri.parse(redirect.substringBefore("/auth/callback") + parts[1]) else null
                                                                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:131: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:131: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
         require(Uri.parse(jwksUrl).host == "auth.openai.com") { "JWKS接続先が不正です" }
                 ~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:185: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\auth\AuthManager.kt:185: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
             require(Uri.parse(endpoint).host == "auth.openai.com")
                     ~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:76: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\DeviceBroker.kt:80: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                         val uri = Uri.parse(raw)
                                   ~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\MainActivity.kt:79: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:79: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                 val specific = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, android.net.Uri.parse("package:$packageName"))
                                                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\MainActivity.kt:308: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:309: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
         TextButton(onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://chatgpt.com/settings/usage"))) }) { Text("ChatGPTで利用枠・アプリの接続を管理") }
                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\MainActivity.kt:340: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\MainActivity.kt:342: Warning: Use the KTX extension function String.toUri instead? [UseKtx]
                 vm.preferences.files().forEach { raw -> runCatching { context.contentResolver.releasePersistableUriPermission(android.net.Uri.parse(raw), Intent.FLAG_GRANT_READ_URI_PERMISSION) } }
                                                                                                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:69: Warning: Use the KTX function createBitmap instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:69: Warning: Use the KTX function createBitmap instead? [UseKtx]
                         val padded = Bitmap.createBitmap(paddedWidth,image.height,Bitmap.Config.ARGB_8888)
                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:73: Warning: Use the KTX extension function Bitmap.scale instead? [UseKtx]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\ScreenCaptureService.kt:73: Warning: Use the KTX extension function Bitmap.scale instead? [UseKtx]
                         val thumbnail = if (ratio < 1f) Bitmap.createScaledBitmap(cropped,(cropped.width*ratio).toInt(),(cropped.height*ratio).toInt(),true) else cropped
                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -274,7 +320,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
    </lint>
    ```
 
-.\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:188: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+C:\Users\suzuo\Documents\Codex\2026-10-31\chatgpt-plus-android-ai-agent-1\outputs\komichi-agent\app\src\main\java\dev\komichi\agent\device\AgentAccessibilityService.kt:188: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
             addView(android.widget.TextView(this@AgentAccessibilityService).apply { text = "内容を編集して機密情報を除いてください。確認済みの会話履歴とともにOpenAIへ送信します。" })
                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -291,4 +337,4 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
 
    https://developer.android.com/guide/topics/resources/localization.html
 
-0 errors, 29 warnings, 1 hint
+0 errors, 41 warnings, 1 hint

@@ -48,7 +48,11 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
     val auth = AuthManager(app, app.vault)
     val shizuku = ShizukuBridge(app)
     val broker = DeviceBroker(app, preferences, gate, audit, shizuku)
-    private val api = ResponsesClient(auth)
+    private val api = ResponsesClient(auth) {
+        "Local capability state: Root opt-in=${preferences.rootEnabled()}, full app scope=${preferences.fullAccessEnabled()}. " +
+            "Root file tools exist for allowed app-private data and require explicit operation approval. " +
+            "If Root is disabled, direct the user to 接続・権限 → Root連携; do not invent a blanket Android limitation."
+    }
     private val history = HistoryStore(app.vault)
     var sessions by mutableStateOf(history.load()); private set
     var selectedId by mutableStateOf(sessions.firstOrNull()?.id ?: ""); private set
@@ -160,7 +164,7 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
                 beginRun()
                 updateCurrent { it.copy(accountId = active.clientId, title = if (it.lines.isEmpty()) approved.take(32) else it.title) }
                 line("user", approved); append(obj("role" to "user", "content" to approved)); save()
-                withTimeout(300_000) { agentLoop() }
+                withTimeout(600_000) { agentLoop() }
                 status = "完了しました"
             } catch (_: CancellationException) { status = "操作を停止しました（時間上限またはキャンセル）" }
               catch (e: Exception) { status = safeError(e); line("notice", status) }
@@ -202,7 +206,9 @@ class AgentViewModel(application: Application): AndroidViewModel(application) {
         busy = true
         job = viewModelScope.launch {
             try { beginRun(); val result = broker.execute(ToolCall(UUID.randomUUID().toString(), "android", name, arguments), shareResult = false)
-                line("local", "端末内テスト: $name\n$result"); status = "端末内テストが完了しました。AIへの送信はありません" }
+                line("local", "端末内テスト: $name\n$result")
+                val parsed = JSONObject(result)
+                status = if (parsed.optString("status") == "failed") "操作失敗: ${parsed.optString("detail").take(400)}" else "端末内テストが完了しました。結果はチャットに表示します。AIへの送信はありません" }
             catch (_: CancellationException) { status = "端末内テストを停止しました" }
             catch (e: Exception) { status = safeError(e) }
             finally { try { save() } finally { endRun(); job = null } }
